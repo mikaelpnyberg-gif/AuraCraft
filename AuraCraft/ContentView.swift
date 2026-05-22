@@ -54,7 +54,7 @@ private func L(
 
 enum Strings {
     // App shell
-    static let appName          = "Valo"
+    static let appName          = "AuraCraft"
     static let appTagline       = L("Lighting Moods", fi: "Valaistustunnelmat", es: "Ambientes de luz", ja: "照明ムード", de: "Lichtstimmungen", sv: "Ljuslägen", zh: "灯光氛围")
     // Dashboard
     static let homeTitle        = L("My Home", fi: "Kotini", es: "Mi hogar", ja: "マイホーム", de: "Mein Zuhause", sv: "Mitt hem", zh: "我的家")
@@ -72,13 +72,13 @@ enum Strings {
     // Auth
     static let homeAccessTitle  = L("Home Access", fi: "Kodin käyttöoikeus", es: "Acceso al hogar", ja: "ホームへのアクセス", de: "Zugriff auf Zuhause", sv: "Hemåtkomst", zh: "家庭访问权限")
     static let homeAccessDesc   = L(
-        "Valo needs access to your Apple Home to illuminate your world.",
-        fi: "Valo tarvitsee pääsyn Apple Kotiisi voidakseen valaista maailmaasi.",
-        es: "Valo necesita acceso a tu Apple Home para iluminar tu mundo.",
-        ja: "Valoがあなたの世界を照らすにはApple Homeへのアクセスが必要です。",
-        de: "Valo benötigt Zugriff auf dein Apple Home, um deine Welt zu beleuchten.",
-        sv: "Valo behöver åtkomst till ditt Apple-hem för att lysa upp din värld.",
-        zh: "Valo 需要访问你的 Apple 家庭，才能点亮你的世界。"
+        "AuraCraft needs access to your Apple Home to illuminate your world.",
+        fi: "AuraCraft tarvitsee pääsyn Apple Kotiisi voidakseen valaista maailmaasi.",
+        es: "AuraCraft necesita acceso a tu Apple Home para iluminar tu mundo.",
+        ja: "AuraCraftがあなたの世界を照らすにはApple Homeへのアクセスが必要です。",
+        de: "AuraCraft benötigt Zugriff auf dein Apple Home, um deine Welt zu beleuchten.",
+        sv: "AuraCraft behöver åtkomst till ditt Apple-hem för att lysa upp din värld.",
+        zh: "AuraCraft 需要访问你的 Apple 家庭，才能点亮你的世界。"
     )
     // Badges
     static let aiSuggested      = L("AI Suggested", fi: "AI-suositus", es: "Sugerido por IA", ja: "AIの提案", de: "KI-Vorschlag", sv: "AI-förslag", zh: "AI 推荐")
@@ -104,7 +104,7 @@ enum Strings {
           zh: "\(total) 盏灯中有 \(c) 盏会响应")
     }
     // StoreKit / Paywall
-    static let paywallTitle            = L("Valo Pro", fi: "Valo Pro", es: "Valo Pro", ja: "Valo Pro", de: "Valo Pro", sv: "Valo Pro", zh: "Valo Pro")
+    static let paywallTitle            = L("AuraCraft Pro", fi: "AuraCraft Pro", es: "AuraCraft Pro", ja: "AuraCraft Pro", de: "AuraCraft Pro", sv: "AuraCraft Pro", zh: "AuraCraft Pro")
     static let paywallSubtitle         = L("Unlock the full lighting studio with one simple purchase.", fi: "Avaa koko valaistusstudio yhdellä ostolla.", es: "Desbloquea todo el estudio de iluminación con una compra única.", ja: "一度の購入で照明スタジオ全体を解除できます。", de: "Schalte das komplette Lichtstudio mit einem einmaligen Kauf frei.", sv: "Lås upp hela ljusstudion med ett enda köp.", zh: "一次购买即可解锁完整灯光工作室。")
     static let benefitUnlimitedRooms   = L("Unlimited rooms", fi: "Rajattomasti huoneita", es: "Habitaciones ilimitadas", ja: "無制限の部屋", de: "Unbegrenzte Räume", sv: "Obegränsat antal rum", zh: "无限房间")
     static let benefitAISuggestions    = L("AI lighting suggestions", fi: "AI-valaistusehdotukset", es: "Sugerencias de iluminación con IA", ja: "AI照明提案", de: "KI-Lichtvorschläge", sv: "AI-ljusförslag", zh: "AI 灯光建议")
@@ -114,7 +114,7 @@ enum Strings {
     static let purchasePending         = L("Purchase is pending approval.", fi: "Osto odottaa hyväksyntää.", es: "La compra está pendiente de aprobación.", ja: "購入は承認待ちです。", de: "Der Kauf wartet auf Genehmigung.", sv: "Köpet väntar på godkännande.", zh: "购买正在等待批准。")
     static let purchaseVerificationFailed = L("We could not verify this purchase.", fi: "Ostoa ei voitu vahvistaa.", es: "No pudimos verificar esta compra.", ja: "この購入を確認できませんでした。", de: "Wir konnten diesen Kauf nicht verifizieren.", sv: "Vi kunde inte verifiera köpet.", zh: "无法验证此购买。")
     static let lockedAISuggestion      = L("Pro suggestion", fi: "Pro-ehdotus", es: "Sugerencia Pro", ja: "Pro提案", de: "Pro-Vorschlag", sv: "Pro-förslag", zh: "Pro 建议")
-    static let lockedAISuggestionDesc  = L("Unlock Valo Pro to reveal this AI mood.", fi: "Avaa Valo Pro nähdäksesi tämän AI-tunnelman.", es: "Desbloquea Valo Pro para revelar este ambiente con IA.", ja: "Valo Proを解除してこのAIムードを表示します。", de: "Schalte Valo Pro frei, um diese KI-Stimmung zu sehen.", sv: "Lås upp Valo Pro för att visa denna AI-stämning.", zh: "解锁 Valo Pro 以显示此 AI 氛围。")
+    static let lockedAISuggestionDesc  = L("Unlock AuraCraft Pro to reveal this AI mood.", fi: "Avaa AuraCraft Pro nähdäksesi tämän AI-tunnelman.", es: "Desbloquea AuraCraft Pro para revelar este ambiente con IA.", ja: "AuraCraft Proを解除してこのAIムードを表示します。", de: "Schalte AuraCraft Pro frei, um diese KI-Stimmung zu sehen.", sv: "Lås upp AuraCraft Pro för att visa denna AI-stämning.", zh: "解锁 AuraCraft Pro 以显示此 AI 氛围。")
     static let lockedRoomsSubtitle     = L("Upgrade for unlimited rooms", fi: "Päivitä rajattomiin huoneisiin", es: "Actualiza para habitaciones ilimitadas", ja: "アップグレードで部屋数無制限", de: "Upgrade für unbegrenzte Räume", sv: "Uppgradera för obegränsade rum", zh: "升级以解锁无限房间")
     static let hardwareUpgradeTitle    = L("Want full color?", fi: "Haluatko täyden värivalon?", es: "¿Quieres color completo?", ja: "フルカラーにしますか？", de: "Volle Farbe gewünscht?", sv: "Vill du ha full färg?", zh: "想要全彩灯光？")
     static let hardwareUpgradeSubtitle = L("Upgrade your lights", fi: "Päivitä valaisimesi", es: "Mejora tus luces", ja: "ライトをアップグレード", de: "Rüste deine Lichter auf", sv: "Uppgradera dina lampor", zh: "升级你的灯具")
@@ -400,129 +400,142 @@ struct Mood: Identifiable {
 // ============================================================
 
 final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
-    @Published var rooms: [Room]         = []
-    @Published var isAuthorized: Bool    = false
-    @Published var isLoading: Bool       = false
+    @Published var rooms: [Room] = []
+    @Published var isAuthorized = false
+    @Published var isLoading = false
+    @Published var statusMessage: String?
     /// Room ID → currently applied mood
     @Published var appliedMoods: [UUID: Mood] = [:]
+    @Published private(set) var favoriteMoodNames: Set<String> = []
 
-    private let usesMockHome = true
+    private let favoriteMoodNamesKey = "favoriteMoodNames"
     private var hmManager: HMHomeManager?
     private var lightBindings: [UUID: HomeKitLightBinding] = [:]
 
     private struct HomeKitLightBinding {
+        let homeID: UUID
         let accessoryID: UUID
         let serviceID: UUID
+    }
+
+    override init() {
+        super.init()
+        favoriteMoodNames = Set(UserDefaults.standard.stringArray(forKey: favoriteMoodNamesKey) ?? [])
+    }
+
+    var totalLightCount: Int {
+        rooms.reduce(0) { $0 + $1.lightCount }
+    }
+
+    func isFavorite(_ mood: Mood) -> Bool {
+        favoriteMoodNames.contains(mood.name)
+    }
+
+    func toggleFavorite(_ mood: Mood) {
+        if favoriteMoodNames.contains(mood.name) {
+            favoriteMoodNames.remove(mood.name)
+        } else {
+            favoriteMoodNames.insert(mood.name)
+        }
+        UserDefaults.standard.set(Array(favoriteMoodNames).sorted(), forKey: favoriteMoodNamesKey)
     }
 
     // MARK: Authorization
 
     func requestAuthorization() {
-        guard !isLoading else { return }
-        isLoading = true
+        connectToHomeKit()
+    }
 
-        if usesMockHome {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { [weak self] in
-                self?.loadMockRooms()
-            }
+    func connectToHomeKit() {
+        startHomeKitSession()
+    }
+
+    func refreshHomes() {
+        guard let manager = hmManager else {
+            startHomeKitSession()
             return
         }
 
-        let manager = hmManager ?? HMHomeManager()
-        hmManager = manager
-        manager.delegate = self
-
+        isLoading = true
+        statusMessage = "Refreshing HomeKit data..."
         refreshAuthorizationState(from: manager)
         if manager.authorizationStatus.contains(.authorized) {
             loadHomeKitRooms(from: manager)
         }
     }
 
-    // MARK: Room Loading
+    private func startHomeKitSession() {
+        guard hmManager == nil else {
+            refreshHomes()
+            return
+        }
 
-    private func loadMockRooms() {
-        rooms = [
-            Room(name: "Living Room", icon: "sofa.fill", lights: [
-                Light(name: "Floor Lamp", capability: .fullRGB),
-                Light(name: "Ceiling Spot 1", capability: .fullRGB),
-                Light(name: "Ceiling Spot 2", capability: .fullRGB),
-                Light(name: "Corner Sconce", capability: .colorTemperature),
-                Light(name: "TV Backlight", capability: .fullRGB),
-            ]),
-            Room(name: "Bedroom", icon: "bed.double.fill", lights: [
-                Light(name: "Bedside Left", capability: .colorTemperature),
-                Light(name: "Bedside Right", capability: .colorTemperature),
-                Light(name: "Ceiling Light", capability: .dimmableOnly),
-            ]),
-            Room(name: "Home Office", icon: "desktopcomputer", lights: [
-                Light(name: "Desk Lamp", capability: .colorTemperature),
-                Light(name: "Monitor Backlight", capability: .fullRGB),
-                Light(name: "Ceiling Light", capability: .colorTemperature),
-            ]),
-            Room(name: "Kitchen", icon: "fork.knife", lights: [
-                Light(name: "Counter Strip", capability: .colorTemperature),
-                Light(name: "Island Pendant", capability: .dimmableOnly),
-            ]),
-            Room(name: "Bathroom", icon: "shower.fill", lights: [
-                Light(name: "Mirror Light", capability: .colorTemperature),
-                Light(name: "Ceiling Light", capability: .dimmableOnly),
-            ]),
-        ]
-        lightBindings = [:]
-        isAuthorized = true
-        isLoading = false
+        isLoading = true
+        statusMessage = "Connecting to HomeKit..."
+        let manager = HMHomeManager()
+        manager.delegate = self
+        hmManager = manager
+        refreshAuthorizationState(from: manager)
     }
+
+    // MARK: Room Loading
 
     private func refreshAuthorizationState(from manager: HMHomeManager) {
         let authorized = manager.authorizationStatus.contains(.authorized)
         DispatchQueue.main.async {
             self.isAuthorized = authorized
-            if !authorized {
+            if authorized {
+                self.statusMessage = manager.homes.isEmpty ? "Loading HomeKit rooms..." : nil
+            } else {
                 self.isLoading = false
                 self.rooms = []
                 self.lightBindings = [:]
+                self.statusMessage = "Home access is not authorized. Check HomeKit permission and the app's HomeKit capability."
             }
         }
     }
 
     private func loadHomeKitRooms(from manager: HMHomeManager) {
-        guard let home = manager.homes.first else {
+        guard !manager.homes.isEmpty else {
             DispatchQueue.main.async {
                 self.isAuthorized = manager.authorizationStatus.contains(.authorized)
                 self.isLoading = false
                 self.rooms = []
                 self.lightBindings = [:]
+                self.statusMessage = "No homes were returned by HomeKit. Confirm this iPhone is signed into the same Apple ID as the Home app and that AuraCraft has Home access."
             }
             return
         }
 
         var bindings: [UUID: HomeKitLightBinding] = [:]
-        let homeRooms = [home.roomForEntireHome()] + home.rooms
-        let mappedRooms = homeRooms.compactMap { homeRoom -> Room? in
-            let lights = homeRoom.accessories.flatMap { accessory in
-                accessory.services
-                    .filter { $0.serviceType == HMServiceTypeLightbulb }
-                    .map { service -> Light in
-                        let lightID = service.uniqueIdentifier
-                        bindings[lightID] = HomeKitLightBinding(
-                            accessoryID: accessory.uniqueIdentifier,
-                            serviceID: service.uniqueIdentifier
-                        )
-                        return Light(
-                            id: lightID,
-                            name: displayName(for: service, accessory: accessory),
-                            capability: capability(for: service)
-                        )
-                    }
-            }
+        let mappedRooms = manager.homes.flatMap { home in
+            home.rooms.compactMap { homeRoom -> Room? in
+                let lights = homeRoom.accessories.flatMap { accessory in
+                    accessory.services
+                        .filter { $0.serviceType == HMServiceTypeLightbulb }
+                        .map { service -> Light in
+                            let lightID = service.uniqueIdentifier
+                            bindings[lightID] = HomeKitLightBinding(
+                                homeID: home.uniqueIdentifier,
+                                accessoryID: accessory.uniqueIdentifier,
+                                serviceID: service.uniqueIdentifier
+                            )
+                            return Light(
+                                id: lightID,
+                                name: displayName(for: service, accessory: accessory),
+                                capability: capability(for: service)
+                            )
+                        }
+                }
 
-            guard !lights.isEmpty else { return nil }
-            return Room(
-                id: homeRoom.uniqueIdentifier,
-                name: homeRoom.name,
-                icon: iconName(for: homeRoom.name),
-                lights: lights
-            )
+                guard !lights.isEmpty else { return nil }
+                return Room(
+                    id: homeRoom.uniqueIdentifier,
+                    name: homeRoom.name,
+                    icon: iconName(for: homeRoom.name),
+                    lights: lights
+                )
+            }
         }
 
         DispatchQueue.main.async {
@@ -530,6 +543,9 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
             self.isLoading = false
             self.rooms = mappedRooms
             self.lightBindings = bindings
+            self.statusMessage = mappedRooms.isEmpty
+                ? "HomeKit is connected, but no rooms with controllable lights were found."
+                : nil
         }
     }
 
@@ -537,12 +553,11 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
 
     func applyMood(_ mood: Mood, to room: Room) {
         appliedMoods[room.id] = mood
-        guard !usesMockHome else { return }
-        guard let home = hmManager?.homes.first else { return }
 
         for light in room.lights {
             guard
                 let binding = lightBindings[light.id],
+                let home = hmManager?.homes.first(where: { $0.uniqueIdentifier == binding.homeID }),
                 let accessory = home.accessories.first(where: { $0.uniqueIdentifier == binding.accessoryID }),
                 let service = accessory.services.first(where: { $0.uniqueIdentifier == binding.serviceID })
             else { continue }
@@ -553,12 +568,11 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
 
     func turnOffLights(in room: Room) {
         appliedMoods[room.id] = nil
-        guard !usesMockHome else { return }
-        guard let home = hmManager?.homes.first else { return }
 
         for light in room.lights {
             guard
                 let binding = lightBindings[light.id],
+                let home = hmManager?.homes.first(where: { $0.uniqueIdentifier == binding.homeID }),
                 let accessory = home.accessories.first(where: { $0.uniqueIdentifier == binding.accessoryID }),
                 let service = accessory.services.first(where: { $0.uniqueIdentifier == binding.serviceID })
             else { continue }
@@ -574,6 +588,13 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
     func homeManagerDidUpdateHomes(_ manager: HMHomeManager) {
         refreshAuthorizationState(from: manager)
         if manager.authorizationStatus.contains(.authorized) {
+            loadHomeKitRooms(from: manager)
+        }
+    }
+
+    func homeManager(_ manager: HMHomeManager, didUpdate status: HMHomeManagerAuthorizationStatus) {
+        refreshAuthorizationState(from: manager)
+        if status.contains(.authorized) {
             loadHomeKitRooms(from: manager)
         }
     }
@@ -972,6 +993,9 @@ struct ContentView: View {
             }
         }
         .animation(.easeInOut(duration: 0.4), value: homeKit.isAuthorized)
+        .task {
+            homeKit.connectToHomeKit()
+        }
     }
 }
 
@@ -1023,6 +1047,13 @@ struct AuthorizationView: View {
                             .lineSpacing(4)
                     }
 
+                    if let statusMessage = homeKit.statusMessage {
+                        Text(statusMessage)
+                            .font(AuraFont.body(13))
+                            .foregroundColor(AuraColor.textSecondary)
+                            .multilineTextAlignment(.center)
+                    }
+
                     Button { homeKit.requestAuthorization() } label: {
                         HStack(spacing: AuraSpacing.sm) {
                             if homeKit.isLoading {
@@ -1041,7 +1072,7 @@ struct AuthorizationView: View {
                                 .fill(AuraColor.textPrimary)
                         )
                     }
-                    .disabled(homeKit.isLoading)
+                    .disabled(false)
                 }
                 .auraCard(padding: AuraSpacing.lg)
                 .padding(.horizontal, AuraSpacing.lg)
@@ -1058,6 +1089,7 @@ struct DashboardView: View {
     @EnvironmentObject var homeKit: HomeKitManager
     @EnvironmentObject var storeManager: StoreManager
     @State private var showingPaywall = false
+    @State private var showingProfile = false
 
     private var visibleRooms: [Room] {
         storeManager.isProUnlocked ? homeKit.rooms : Array(homeKit.rooms.prefix(2))
@@ -1081,18 +1113,40 @@ struct DashboardView: View {
                     VStack(alignment: .leading, spacing: AuraSpacing.xl) {
 
                         // ── Header
-                        DashboardHeaderView()
-                            .padding(.horizontal, AuraSpacing.lg)
-                            .padding(.top, AuraSpacing.sm)
+                        DashboardHeaderView {
+                            showingProfile = true
+                        }
+                        .padding(.horizontal, AuraSpacing.lg)
+                        .padding(.top, AuraSpacing.sm)
 
                         // ── Room grid
                         VStack(alignment: .leading, spacing: AuraSpacing.md) {
-                            Text(Strings.rooms)
-                                .font(AuraFont.caption(12))
-                                .foregroundColor(AuraColor.textTertiary)
-                                .kerning(1.8)
-                                .textCase(.uppercase)
-                                .padding(.horizontal, AuraSpacing.lg)
+                            HStack {
+                                Text(Strings.rooms)
+                                    .font(AuraFont.caption(12))
+                                    .foregroundColor(AuraColor.textTertiary)
+                                    .kerning(1.8)
+                                    .textCase(.uppercase)
+
+                                Spacer()
+
+                                Button { homeKit.refreshHomes() } label: {
+                                    Image(systemName: "arrow.clockwise")
+                                        .font(.system(size: 14, weight: .semibold))
+                                        .foregroundColor(AuraColor.textSecondary)
+                                        .frame(width: 32, height: 32)
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityLabel("Refresh HomeKit rooms")
+                            }
+                            .padding(.horizontal, AuraSpacing.lg)
+
+                            if let statusMessage = homeKit.statusMessage {
+                                Text(statusMessage)
+                                    .font(AuraFont.body(13))
+                                    .foregroundColor(AuraColor.textSecondary)
+                                    .padding(.horizontal, AuraSpacing.lg)
+                            }
 
                             LazyVGrid(columns: columns, spacing: AuraSpacing.md) {
                                 ForEach(visibleRooms) { room in
@@ -1125,6 +1179,10 @@ struct DashboardView: View {
                 PaywallView()
                     .environmentObject(storeManager)
             }
+            .sheet(isPresented: $showingProfile) {
+                ProfileSheetView()
+                    .environmentObject(homeKit)
+            }
         }
     }
 }
@@ -1133,8 +1191,7 @@ struct DashboardView: View {
 
 struct DashboardHeaderView: View {
     @EnvironmentObject var homeKit: HomeKitManager
-
-    var totalLights: Int { homeKit.rooms.reduce(0) { $0 + $1.lightCount } }
+    let onProfileTap: () -> Void
 
     var body: some View {
         HStack(alignment: .top) {
@@ -1143,17 +1200,59 @@ struct DashboardHeaderView: View {
                     .font(AuraFont.display(34))
                     .foregroundColor(AuraColor.textPrimary)
                     .kerning(-0.5)
-                Text("\(homeKit.rooms.count) \(Strings.rooms.lowercased()) · \(totalLights) \(Strings.lights)")
+                Text("\(homeKit.rooms.count) \(Strings.rooms.lowercased()) · \(homeKit.totalLightCount) \(Strings.lights)")
                     .font(AuraFont.body(14))
                     .foregroundColor(AuraColor.textSecondary)
             }
             Spacer()
-            Button { } label: {
+            Button(action: onProfileTap) {
                 Image(systemName: "person.circle.fill")
                     .font(.system(size: 28, weight: .light))
                     .foregroundColor(AuraColor.textSecondary)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Profile")
         }
+    }
+}
+
+struct ProfileSheetView: View {
+    @EnvironmentObject var homeKit: HomeKitManager
+
+    private var favoriteMoodNames: [String] {
+        homeKit.favoriteMoodNames.sorted()
+    }
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                AuraColor.background.ignoresSafeArea()
+
+                List {
+                    Section("Home") {
+                        Label("\(homeKit.totalLightCount) total lights", systemImage: "lightbulb.2.fill")
+                        Label("\(homeKit.rooms.count) rooms", systemImage: "house.fill")
+                    }
+
+                    Section("Favorite Moods") {
+                        if favoriteMoodNames.isEmpty {
+                            Text("No favorite moods saved yet")
+                                .foregroundColor(AuraColor.textSecondary)
+                        } else {
+                            ForEach(favoriteMoodNames, id: \.self) { moodName in
+                                Label(moodName, systemImage: "star.fill")
+                            }
+                        }
+                    }
+                }
+                .scrollContentBackground(.hidden)
+            }
+            .navigationTitle("Profile")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+        .presentationDetents([.medium, .large])
     }
 }
 
@@ -1580,6 +1679,8 @@ struct LibraryRowView: View {
 // ── 8p  Mood Detail Sheet ─────────────────────────────────────
 
 struct MoodDetailSheet: View {
+    @EnvironmentObject var homeKit: HomeKitManager
+
     let mood: Mood
     let room: Room
     let onApply: () -> Void
@@ -1604,6 +1705,19 @@ struct MoodDetailSheet: View {
                     LinearGradient(colors: mood.gradientColors, startPoint: .topLeading, endPoint: .bottomTrailing)
                         .frame(height: 230)
                         .ignoresSafeArea(edges: .top)
+
+                    Button {
+                        homeKit.toggleFavorite(mood)
+                    } label: {
+                        Image(systemName: homeKit.isFavorite(mood) ? "star.fill" : "star")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(width: 40, height: 40)
+                            .background(Circle().fill(Color.black.opacity(0.22)))
+                    }
+                    .accessibilityLabel(homeKit.isFavorite(mood) ? "Remove favorite mood" : "Save favorite mood")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    .padding(AuraSpacing.lg)
 
                     VStack(alignment: .leading, spacing: AuraSpacing.sm) {
                         if mood.isGenerated {
@@ -1729,16 +1843,3 @@ struct SettingChip: View {
     }
 }
 
-// ╔══════════════════════════════════════════════════════════════════╗
-// ║  END OF FILE — AuraCraft.swift                                   ║
-// ║                                                                   ║
-// ║  Production Checklist:                                            ║
-// ║  ☐ Add HomeKit entitlement in .entitlements file                 ║
-// ║  ☐ Add NSHomeKitUsageDescription to Info.plist                   ║
-// ║  ☐ Uncomment `import HomeKit` at the top of this file            ║
-// ║  ☐ Implement HMHomeManagerDelegate in HomeKitManager             ║
-// ║  ☐ Replace LightSetting → HMCharacteristic write calls           ║
-// ║  ☐ Replace mock rooms with HMHome.rooms mapping                  ║
-// ║  ☐ Add Localizable.strings for EN and FI targets                 ║
-// ║  ☐ Wire Strings enum to NSLocalizedString()                      ║
-// ╚══════════════════════════════════════════════════════════════════╝

@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		AEAB50172FC03E3C00D4F2DE /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AEAB50162FC03E3C00D4F2DE /* StoreKit.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		AE0163022FBD15DC004D35CE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +31,7 @@
 		AE0162F22FBD15DB004D35CE /* AuraCraft.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AuraCraft.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE0163012FBD15DC004D35CE /* AuraCraftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AuraCraftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE01630B2FBD15DC004D35CE /* AuraCraftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AuraCraftUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AEAB50162FC03E3C00D4F2DE /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -52,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AEAB50172FC03E3C00D4F2DE /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +84,7 @@
 				AE0162F42FBD15DB004D35CE /* AuraCraft */,
 				AE0163042FBD15DC004D35CE /* AuraCraftTests */,
 				AE01630E2FBD15DC004D35CE /* AuraCraftUITests */,
+				AEAB50152FC03E3C00D4F2DE /* Frameworks */,
 				AE0162F32FBD15DB004D35CE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +97,14 @@
 				AE01630B2FBD15DC004D35CE /* AuraCraftUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		AEAB50152FC03E3C00D4F2DE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AEAB50162FC03E3C00D4F2DE /* StoreKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -322,7 +337,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -380,7 +395,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -395,12 +410,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = AuraCraft/AuraCraft.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = KTLJYJ5JS2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = MyValo;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSHomeKitUsageDescription = "AuraCraft needs access to your HomeKit rooms and lights to show and control your lighting moods.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -428,12 +446,15 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = AuraCraft/AuraCraft.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = KTLJYJ5JS2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = MyValo;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSHomeKitUsageDescription = "AuraCraft needs access to your HomeKit rooms and lights to show and control your lighting moods.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
