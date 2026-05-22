@@ -12,7 +12,6 @@ import SwiftData
 struct AuraCraftApp: App {
     @StateObject private var homeKit: HomeKitManager
     @StateObject private var storeManager = StoreManager()
-    @StateObject private var watchBridge: PhoneWatchBridge
 
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
@@ -29,9 +28,7 @@ struct AuraCraftApp: App {
 
     init() {
         let homeKit = HomeKitManager()
-        _homeKit = StateObject(wrappedValue: homeKit)
-        _watchBridge = StateObject(wrappedValue: PhoneWatchBridge(homeKit: homeKit))
-    }
+        _homeKit = StateObject(wrappedValue: homeKit)    }
 
     var body: some Scene {
         WindowGroup {

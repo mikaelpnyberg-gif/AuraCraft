@@ -42,7 +42,7 @@ struct PaywallView: View {
 
                     VStack(spacing: AuraSpacing.md) {
                         Button {
-                            Task { await storeManager.purchasePro() }
+                            Task {  await storeManager.purchasePro() }
                         } label: {
                             HStack(spacing: AuraSpacing.sm) {
                                 if storeManager.isPurchasing {

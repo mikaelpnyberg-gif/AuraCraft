@@ -1,5 +1,7 @@
 import Foundation
+import Combine
 import StoreKit
+import Combine
 
 @MainActor
 final class StoreManager: ObservableObject {
@@ -35,7 +37,7 @@ final class StoreManager: ObservableObject {
         defer { isLoadingProducts = false }
 
         do {
-            let products = try await Product.products(for: [Self.proProductID])
+            let products = try  await Product.products(for: [Self.proProductID])
             proProduct = products.first
         } catch {
             storeErrorMessage = error.localizedDescription
@@ -58,8 +60,8 @@ final class StoreManager: ObservableObject {
             switch result {
             case .success(let verificationResult):
                 let transaction = try checkVerified(verificationResult)
-                await unlockPro(for: transaction)
-                await transaction.finish()
+                await   unlockPro(for: transaction)
+                await   transaction.finish()
             case .pending:
                 storeErrorMessage = Strings.purchasePending
             case .userCancelled:
@@ -75,7 +77,7 @@ final class StoreManager: ObservableObject {
     func restorePurchases() async {
         do {
             try await AppStore.sync()
-            await updatePurchasedProducts()
+            await   updatePurchasedProducts()
         } catch {
             storeErrorMessage = error.localizedDescription
         }
@@ -102,11 +104,11 @@ final class StoreManager: ObservableObject {
                 guard let self else { return }
 
                 do {
-                    let transaction = try await self.checkVerified(result)
-                    await self.unlockPro(for: transaction)
+                    let transaction = try self.checkVerified(result)
+                    await    self.unlockPro(for: transaction)
                     await transaction.finish()
                 } catch {
-                    await MainActor.run {
+                    await    MainActor.run {
                         self.storeErrorMessage = error.localizedDescription
                     }
                 }
