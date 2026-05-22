@@ -1,0 +1,217 @@
+// Copy this file into the watchOS app target after creating it in Xcode.
+// It expects the iPhone app to run PhoneWatchBridge.
+
+import SwiftUI
+import WatchConnectivity
+
+@main
+struct ValoWatchApp: App {
+    @StateObject private var watchStore = WatchMoodStore()
+
+    var body: some Scene {
+        WindowGroup {
+            NavigationStack {
+                WatchRoomsView()
+                    .environmentObject(watchStore)
+            }
+        }
+    }
+}
+
+struct WatchRoom: Identifiable, Hashable {
+    let id: String
+    let name: String
+    let lightCount: Int
+    let hasRGB: Bool
+    let activeMoodName: String
+    let moods: [WatchMood]
+}
+
+struct WatchMood: Identifiable, Hashable {
+    var id: String { name }
+    let name: String
+    let category: String
+}
+
+final class WatchMoodStore: NSObject, ObservableObject {
+    @Published var rooms: [WatchRoom] = []
+    @Published var statusText = "Connecting"
+
+    private enum Key {
+        static let action = "action"
+        static let rooms = "rooms"
+        static let id = "id"
+        static let name = "name"
+        static let lightCount = "lightCount"
+        static let hasRGB = "hasRGB"
+        static let activeMoodName = "activeMoodName"
+        static let moods = "moods"
+        static let category = "category"
+        static let roomID = "roomID"
+        static let moodName = "moodName"
+    }
+
+    private enum Action {
+        static let requestSnapshot = "requestSnapshot"
+        static let applyMood = "applyMood"
+        static let turnOffRoom = "turnOffRoom"
+    }
+
+    override init() {
+        super.init()
+        if WCSession.isSupported() {
+            WCSession.default.delegate = self
+            WCSession.default.activate()
+        }
+    }
+
+    func requestSnapshot() {
+        send([Key.action: Action.requestSnapshot])
+    }
+
+    func apply(_ mood: WatchMood, in room: WatchRoom) {
+        send([
+            Key.action: Action.applyMood,
+            Key.roomID: room.id,
+            Key.moodName: mood.name
+        ])
+    }
+
+    func turnOff(_ room: WatchRoom) {
+        send([
+            Key.action: Action.turnOffRoom,
+            Key.roomID: room.id
+        ])
+    }
+
+    private func send(_ message: [String: Any]) {
+        guard WCSession.default.activationState == .activated else { return }
+
+        if WCSession.default.isReachable {
+            WCSession.default.sendMessage(message) { [weak self] reply in
+                self?.applySnapshot(reply)
+            } errorHandler: { [weak self] error in
+                DispatchQueue.main.async {
+                    self?.statusText = error.localizedDescription
+                }
+            }
+        } else {
+            WCSession.default.transferUserInfo(message)
+        }
+    }
+
+    private func applySnapshot(_ snapshot: [String: Any]) {
+        guard let roomPayloads = snapshot[Key.rooms] as? [[String: Any]] else { return }
+
+        let parsedRooms = roomPayloads.map { payload -> WatchRoom in
+            let moodPayloads = payload[Key.moods] as? [[String: String]] ?? []
+            let moods = moodPayloads.map {
+                WatchMood(
+                    name: $0[Key.name] ?? "Mood",
+                    category: $0[Key.category] ?? ""
+                )
+            }
+
+            return WatchRoom(
+                id: payload[Key.id] as? String ?? UUID().uuidString,
+                name: payload[Key.name] as? String ?? "Room",
+                lightCount: payload[Key.lightCount] as? Int ?? 0,
+                hasRGB: payload[Key.hasRGB] as? Bool ?? false,
+                activeMoodName: payload[Key.activeMoodName] as? String ?? "",
+                moods: moods
+            )
+        }
+
+        DispatchQueue.main.async {
+            self.rooms = parsedRooms
+            self.statusText = parsedRooms.isEmpty ? "Open Valo on iPhone" : ""
+        }
+    }
+}
+
+extension WatchMoodStore: WCSessionDelegate {
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
+        DispatchQueue.main.async {
+            self.statusText = error?.localizedDescription ?? "Connected"
+        }
+        requestSnapshot()
+    }
+
+    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String: Any]) {
+        applySnapshot(applicationContext)
+    }
+
+    func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
+        applySnapshot(message)
+    }
+
+    func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
+        applySnapshot(userInfo)
+    }
+}
+
+struct WatchRoomsView: View {
+    @EnvironmentObject private var store: WatchMoodStore
+
+    var body: some View {
+        List {
+            if !store.statusText.isEmpty {
+                Text(store.statusText)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            ForEach(store.rooms) { room in
+                NavigationLink(value: room) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(room.name)
+                        Text("\(room.lightCount) lights")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+        }
+        .navigationTitle("Valo")
+        .navigationDestination(for: WatchRoom.self) { room in
+            WatchMoodListView(room: room)
+        }
+        .task { store.requestSnapshot() }
+    }
+}
+
+struct WatchMoodListView: View {
+    @EnvironmentObject private var store: WatchMoodStore
+    let room: WatchRoom
+
+    var body: some View {
+        List {
+            if !room.activeMoodName.isEmpty {
+                Section("Active") {
+                    Text(room.activeMoodName)
+                    Button(role: .destructive) {
+                        store.turnOff(room)
+                    } label: {
+                        Label("Turn Off", systemImage: "power")
+                    }
+                }
+            }
+
+            Section("Moods") {
+                ForEach(room.moods) { mood in
+                    Button {
+                        store.apply(mood, in: room)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(mood.name)
+                            Text(mood.category)
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+        }
+        .navigationTitle(room.name)
+    }
+}

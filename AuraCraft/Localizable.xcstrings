@@ -1,0 +1,102 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "paywall_title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "AuraCraft Pro" } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "AuraCraft Pro" } }
+      }
+    },
+    "paywall_subtitle" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unlock the full lighting studio with one simple purchase." } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Avaa koko valaistusstudio yhdellä ostolla." } }
+      }
+    },
+    "benefit_unlimited_rooms" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unlimited rooms" } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Rajattomasti huoneita" } }
+      }
+    },
+    "benefit_ai_suggestions" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "AI lighting suggestions" } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "AI-valaistusehdotukset" } }
+      }
+    },
+    "benefit_homekit_sync" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "HomeKit mood sync" } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "HomeKit-tunnelmien synkronointi" } }
+      }
+    },
+    "button_purchase_pro" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unlock Pro - %@" } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Avaa Pro - %@" } }
+      }
+    },
+    "button_restore_purchases" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Restore Purchases" } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Palauta ostot" } }
+      }
+    },
+    "paywall_price_unavailable" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Price unavailable" } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Hinta ei saatavilla" } }
+      }
+    },
+    "purchase_pending" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Purchase is pending approval." } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Osto odottaa hyväksyntää." } }
+      }
+    },
+    "purchase_verification_failed" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "We could not verify this purchase." } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Ostoa ei voitu vahvistaa." } }
+      }
+    },
+    "locked_ai_suggestion" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Pro suggestion" } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Pro-ehdotus" } }
+      }
+    },
+    "locked_ai_suggestion_description" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unlock AuraCraft Pro to reveal this AI mood." } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Avaa AuraCraft Pro nähdäksesi tämän AI-tunnelman." } }
+      }
+    },
+    "locked_rooms_title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%lld more rooms locked" } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "%lld huonetta lukittu" } }
+      }
+    },
+    "locked_rooms_subtitle" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Upgrade for unlimited rooms" } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Päivitä rajattomiin huoneisiin" } }
+      }
+    },
+    "button_upgrade_hardware" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Want full color?" } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Haluatko täyden värivalon?" } }
+      }
+    },
+    "hardware_upgrade_subtitle" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Upgrade your lights" } },
+        "fi" : { "stringUnit" : { "state" : "translated", "value" : "Päivitä valaisimesi" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}
