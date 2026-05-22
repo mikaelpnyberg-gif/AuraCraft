@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 import AVFoundation
 
 @MainActor
@@ -67,7 +68,10 @@ final class SoundSyncManager: ObservableObject {
         guard !isRunning else { return }
 
         do {
-            try await AVAudioApplication.requestRecordPermission()
+            let granted = await AVAudioApplication.requestRecordPermission()
+            guard granted else {
+                throw NSError(domain: "SoundSync", code: 1, userInfo: [NSLocalizedDescriptionKey: "Microphone access was denied."])
+            }
             try configureAudioEngine()
             try engine.start()
             isRunning = true
@@ -131,12 +135,3 @@ final class SoundSyncManager: ObservableObject {
     }
 }
 
-enum WidgetSharedStore {
-    static let appGroupID = "group.com.myvalo.shared"
-    private static var defaults: UserDefaults? { UserDefaults(suiteName: appGroupID) }
-
-    static func publish(favoriteMoodNames: [String], isProUnlocked: Bool) {
-        defaults?.set(favoriteMoodNames, forKey: "favoriteMoodNames")
-        defaults?.set(isProUnlocked, forKey: "isProUnlocked")
-    }
-}

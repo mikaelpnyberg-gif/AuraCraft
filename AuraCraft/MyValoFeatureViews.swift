@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import HomeKit
 
 extension Color {
@@ -176,6 +177,48 @@ struct AIMoodGeneratorView: View {
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+}
+
+struct SoundSyncView: View {
+    @EnvironmentObject private var homeKit: HomeKitManager
+    @StateObject private var soundSync = SoundSyncManager()
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Microphone Sync") {
+                    Toggle("Sound-Reactive Lights", isOn: Binding(
+                        get: { soundSync.isRunning },
+                        set: { enabled in
+                            if enabled {
+                                Task { await soundSync.start(homeKit: homeKit) }
+                            } else {
+                                soundSync.stop()
+                            }
+                        }
+                    ))
+
+                    VStack(alignment: .leading, spacing: AuraSpacing.sm) {
+                        Text("Loudness \(Int(soundSync.loudness * 100))%")
+                        ProgressView(value: soundSync.loudness)
+                        Text("Bass \(Int(soundSync.bassLevel * 100))%")
+                        ProgressView(value: soundSync.bassLevel)
+                        Text("Treble \(Int(soundSync.trebleLevel * 100))%")
+                        ProgressView(value: soundSync.trebleLevel)
+                    }
+                    .font(AuraFont.body(13))
+                }
+
+                if let error = soundSync.errorMessage {
+                    Section("Status") {
+                        Text(error).foregroundColor(.red)
+                    }
+                }
+            }
+            .navigationTitle("Sound Sync")
+        }
+        .onDisappear { soundSync.stop() }
     }
 }
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AE1AA7282FC069EE008C8FEF /* MyValoProducts.storekit in Resources */ = {isa = PBXBuildFile; fileRef = AE1AA7272FC069EE008C8FEF /* MyValoProducts.storekit */; };
 		AEAB50172FC03E3C00D4F2DE /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AEAB50162FC03E3C00D4F2DE /* StoreKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -27,16 +28,45 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		AE1AA7242FC06536008C8FEF /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		AE0162F22FBD15DB004D35CE /* AuraCraft.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AuraCraft.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE0163012FBD15DC004D35CE /* AuraCraftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AuraCraftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AE01630B2FBD15DC004D35CE /* AuraCraftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AuraCraftUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AE1AA70B2FC06535008C8FEF /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		AE1AA70D2FC06535008C8FEF /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		AE1AA7272FC069EE008C8FEF /* MyValoProducts.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = MyValoProducts.storekit; sourceTree = "<group>"; };
 		AEAB50162FC03E3C00D4F2DE /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		AE1AA7052FC0650B008C8FEF /* Exceptions for "AuraCraft" folder in "AuraCraft" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = AE0162F12FBD15DB004D35CE /* AuraCraft */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		AE0162F42FBD15DB004D35CE /* AuraCraft */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AE1AA7052FC0650B008C8FEF /* Exceptions for "AuraCraft" folder in "AuraCraft" target */,
+			);
 			path = AuraCraft;
 			sourceTree = "<group>";
 		};
@@ -48,6 +78,11 @@
 		AE01630E2FBD15DC004D35CE /* AuraCraftUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = AuraCraftUITests;
+			sourceTree = "<group>";
+		};
+		AE1AA70F2FC06535008C8FEF /* AuraCraftWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AuraCraftWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -81,9 +116,11 @@
 		AE0162E92FBD15DA004D35CE = {
 			isa = PBXGroup;
 			children = (
+				AE1AA7272FC069EE008C8FEF /* MyValoProducts.storekit */,
 				AE0162F42FBD15DB004D35CE /* AuraCraft */,
 				AE0163042FBD15DC004D35CE /* AuraCraftTests */,
 				AE01630E2FBD15DC004D35CE /* AuraCraftUITests */,
+				AE1AA70F2FC06535008C8FEF /* AuraCraftWidget */,
 				AEAB50152FC03E3C00D4F2DE /* Frameworks */,
 				AE0162F32FBD15DB004D35CE /* Products */,
 			);
@@ -103,6 +140,8 @@
 			isa = PBXGroup;
 			children = (
 				AEAB50162FC03E3C00D4F2DE /* StoreKit.framework */,
+				AE1AA70B2FC06535008C8FEF /* WidgetKit.framework */,
+				AE1AA70D2FC06535008C8FEF /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -117,6 +156,7 @@
 				AE0162EE2FBD15DB004D35CE /* Sources */,
 				AE0162EF2FBD15DB004D35CE /* Frameworks */,
 				AE0162F02FBD15DB004D35CE /* Resources */,
+				AE1AA7242FC06536008C8FEF /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -227,6 +267,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE1AA7282FC069EE008C8FEF /* MyValoProducts.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -416,6 +457,7 @@
 				DEVELOPMENT_TEAM = KTLJYJ5JS2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AuraCraft/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MyValo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSHomeKitUsageDescription = "AuraCraft needs access to your HomeKit rooms and lights to show and control your lighting moods.";
@@ -452,6 +494,7 @@
 				DEVELOPMENT_TEAM = KTLJYJ5JS2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AuraCraft/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MyValo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSHomeKitUsageDescription = "AuraCraft needs access to your HomeKit rooms and lights to show and control your lighting moods.";

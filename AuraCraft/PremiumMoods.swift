@@ -1,18 +1,21 @@
 import SwiftUI
 
+@MainActor
 enum PremiumMoodLibrary {
-    static let moods: [Mood] = specs.enumerated().map { index, spec in
-        let settings = spec.colors.map { LightSetting(brightness: spec.brightness, hex: $0) }
-        return Mood(
-            name: spec.name,
-            description: spec.description,
-            category: spec.category,
-            isPremium: true,
-            requiredCapability: .fullRGB,
-            lightSetting: settings.first ?? LightSetting(brightness: spec.brightness),
-            lightSettings: settings,
-            gradientColors: spec.colors.map(ColorHex.color(from:))
-        )
+    static var moods: [Mood] {
+        specs.map { spec in
+            let settings = spec.colors.map { LightSetting(brightness: spec.brightness, hex: $0) }
+            return Mood(
+                name: spec.name,
+                description: spec.description,
+                category: spec.category,
+                isPremium: true,
+                requiredCapability: .fullRGB,
+                lightSetting: settings.first ?? LightSetting(brightness: spec.brightness),
+                lightSettings: settings,
+                gradientColors: spec.colors.map(ColorHex.color(from:))
+            )
+        }
     }
 
     private struct Spec {

@@ -300,6 +300,20 @@ struct LightSetting: Identifiable {
     var hue: Double?        = nil           // 0–360
     var saturation: Double? = nil           // 0.0–1.0
 
+    init(brightness: Double, colorTemperatureKelvin: Int? = nil, hue: Double? = nil, saturation: Double? = nil) {
+        self.brightness = brightness
+        self.colorTemperatureKelvin = colorTemperatureKelvin
+        self.hue = hue
+        self.saturation = saturation
+    }
+
+    init(brightness: Double, hex: String) {
+        self.brightness = brightness
+        let hs = ColorHex.hueSaturation(from: hex)
+        self.hue = hs.hue
+        self.saturation = hs.saturation
+    }
+
     /// A SwiftUI Color for previewing this setting in the UI.
     var previewColor: Color {
         if let h = hue, let s = saturation {
@@ -310,6 +324,43 @@ struct LightSetting: Identifiable {
             return Color(red: 1.0 - t * 0.30, green: 0.85 - t * 0.10, blue: 0.60 + t * 0.40)
         }
         return Color(white: brightness)
+    }
+}
+
+enum ColorHex {
+    static func color(from hex: String) -> Color {
+        let rgb = rgbComponents(from: hex)
+        return Color(red: rgb.red, green: rgb.green, blue: rgb.blue)
+    }
+
+    static func hueSaturation(from hex: String) -> (hue: Double, saturation: Double) {
+        let rgb = rgbComponents(from: hex)
+        let maxValue = max(rgb.red, rgb.green, rgb.blue)
+        let minValue = min(rgb.red, rgb.green, rgb.blue)
+        let delta = maxValue - minValue
+        guard delta > 0 else { return (0, 0) }
+
+        let hue: Double
+        if maxValue == rgb.red {
+            hue = 60 * (((rgb.green - rgb.blue) / delta).truncatingRemainder(dividingBy: 6))
+        } else if maxValue == rgb.green {
+            hue = 60 * (((rgb.blue - rgb.red) / delta) + 2)
+        } else {
+            hue = 60 * (((rgb.red - rgb.green) / delta) + 4)
+        }
+        return (hue < 0 ? hue + 360 : hue, delta / maxValue)
+    }
+
+    private static func rgbComponents(from hex: String) -> (red: Double, green: Double, blue: Double) {
+        let cleaned = hex.trimmingCharacters(in: CharacterSet(charactersIn: "#"))
+        guard cleaned.count == 6, let value = Int(cleaned, radix: 16) else {
+            return (1, 1, 1)
+        }
+        return (
+            Double((value >> 16) & 0xFF) / 255,
+            Double((value >> 8) & 0xFF) / 255,
+            Double(value & 0xFF) / 255
+        )
     }
 }
 
@@ -367,9 +418,11 @@ struct Mood: Identifiable {
     /// false → a static preset from SceneLibrary.
     var isGenerated: Bool
     var isLocked: Bool
+    var isPremium: Bool
     /// Minimum hardware required; lights below this level receive a brightness-only fallback.
     var requiredCapability: LightCapability
     var lightSetting: LightSetting
+    var lightSettings: [LightSetting]
     var gradientColors: [Color]
 
     init(
@@ -379,8 +432,10 @@ struct Mood: Identifiable {
         category: MoodCategory,
         isGenerated: Bool = false,
         isLocked: Bool = false,
+        isPremium: Bool = false,
         requiredCapability: LightCapability,
         lightSetting: LightSetting,
+        lightSettings: [LightSetting]? = nil,
         gradientColors: [Color]? = nil
     ) {
         self.id = id
@@ -389,8 +444,10 @@ struct Mood: Identifiable {
         self.category = category
         self.isGenerated = isGenerated
         self.isLocked = isLocked
+        self.isPremium = isPremium
         self.requiredCapability = requiredCapability
         self.lightSetting = lightSetting
+        self.lightSettings = lightSettings ?? [lightSetting]
         self.gradientColors = gradientColors ?? category.gradientColors
     }
 }
@@ -412,10 +469,19 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
     private var hmManager: HMHomeManager?
     private var lightBindings: [UUID: HomeKitLightBinding] = [:]
 
+    struct ControllableLight: Identifiable {
+        let id: UUID
+        let name: String
+        let roomName: String
+        let capability: LightCapability
+    }
+
     private struct HomeKitLightBinding {
         let homeID: UUID
         let accessoryID: UUID
         let serviceID: UUID
+        let roomName: String
+        let capability: LightCapability
     }
 
     override init() {
@@ -425,6 +491,14 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
 
     var totalLightCount: Int {
         rooms.reduce(0) { $0 + $1.lightCount }
+    }
+
+    var controllableLights: [ControllableLight] {
+        rooms.flatMap { room in
+            room.lights.map { light in
+                ControllableLight(id: light.id, name: light.name, roomName: room.name, capability: light.capability)
+            }
+        }
     }
 
     func isFavorite(_ mood: Mood) -> Bool {
@@ -437,7 +511,8 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
         } else {
             favoriteMoodNames.insert(mood.name)
         }
-        UserDefaults.standard.set(Array(favoriteMoodNames).sorted(), forKey: favoriteMoodNamesKey)
+        let sortedNames = Array(favoriteMoodNames).sorted()
+        UserDefaults.standard.set(sortedNames, forKey: favoriteMoodNamesKey)
     }
 
     // MARK: Authorization
@@ -515,15 +590,18 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
                         .filter { $0.serviceType == HMServiceTypeLightbulb }
                         .map { service -> Light in
                             let lightID = service.uniqueIdentifier
+                            let lightCapability = capability(for: service)
                             bindings[lightID] = HomeKitLightBinding(
                                 homeID: home.uniqueIdentifier,
                                 accessoryID: accessory.uniqueIdentifier,
-                                serviceID: service.uniqueIdentifier
+                                serviceID: service.uniqueIdentifier,
+                                roomName: homeRoom.name,
+                                capability: lightCapability
                             )
                             return Light(
                                 id: lightID,
                                 name: displayName(for: service, accessory: accessory),
-                                capability: capability(for: service)
+                                capability: lightCapability
                             )
                         }
                 }
@@ -554,7 +632,7 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
     func applyMood(_ mood: Mood, to room: Room) {
         appliedMoods[room.id] = mood
 
-        for light in room.lights {
+        for (index, light) in room.lights.enumerated() {
             guard
                 let binding = lightBindings[light.id],
                 let home = hmManager?.homes.first(where: { $0.uniqueIdentifier == binding.homeID }),
@@ -562,7 +640,8 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
                 let service = accessory.services.first(where: { $0.uniqueIdentifier == binding.serviceID })
             else { continue }
 
-            apply(mood.lightSetting, to: service, capability: light.capability)
+            let setting = mood.lightSettings[index % mood.lightSettings.count]
+            apply(setting, to: service, capability: light.capability)
         }
     }
 
@@ -570,18 +649,38 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
         appliedMoods[room.id] = nil
 
         for light in room.lights {
-            guard
-                let binding = lightBindings[light.id],
-                let home = hmManager?.homes.first(where: { $0.uniqueIdentifier == binding.homeID }),
-                let accessory = home.accessories.first(where: { $0.uniqueIdentifier == binding.accessoryID }),
-                let service = accessory.services.first(where: { $0.uniqueIdentifier == binding.serviceID })
-            else { continue }
-
-            write(false, to: HMCharacteristicTypePowerState, in: service)
+            setPower(false, for: light.id)
         }
     }
 
     func currentMood(for room: Room) -> Mood? { appliedMoods[room.id] }
+
+    func setPower(_ isOn: Bool, for lightID: UUID) {
+        guard let service = service(for: lightID) else { return }
+        write(isOn, to: HMCharacteristicTypePowerState, in: service)
+    }
+
+    func setBrightness(_ brightness: Double, for lightID: UUID) {
+        guard let service = service(for: lightID) else { return }
+        write(Int(brightness * 100), to: HMCharacteristicTypeBrightness, in: service)
+    }
+
+    func setColor(_ color: Color, for lightID: UUID) {
+        guard let service = service(for: lightID), let hs = color.hueSaturationBrightness else { return }
+        write(true, to: HMCharacteristicTypePowerState, in: service)
+        write(hs.hue * 360, to: HMCharacteristicTypeHue, in: service)
+        write(hs.saturation * 100, to: HMCharacteristicTypeSaturation, in: service)
+        write(Int(hs.brightness * 100), to: HMCharacteristicTypeBrightness, in: service)
+    }
+
+    func applyToAllLights(brightness: Double, color: Color) {
+        for light in controllableLights {
+            setBrightness(brightness, for: light.id)
+            if light.capability == .fullRGB {
+                setColor(color, for: light.id)
+            }
+        }
+    }
 
     // MARK: HomeKit Delegate
 
@@ -600,6 +699,16 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
     }
 
     // MARK: HomeKit Helpers
+
+    private func service(for lightID: UUID) -> HMService? {
+        guard
+            let binding = lightBindings[lightID],
+            let home = hmManager?.homes.first(where: { $0.uniqueIdentifier == binding.homeID }),
+            let accessory = home.accessories.first(where: { $0.uniqueIdentifier == binding.accessoryID })
+        else { return nil }
+
+        return accessory.services.first(where: { $0.uniqueIdentifier == binding.serviceID })
+    }
 
     private func apply(_ setting: LightSetting, to service: HMService, capability: LightCapability) {
         write(true, to: HMCharacteristicTypePowerState, in: service)
@@ -855,7 +964,7 @@ enum SceneLibrary {
         let level = room.dominantCapability.capabilityLevel
         var result: [MoodCategory: [Mood]] = [:]
         for category in MoodCategory.allCases {
-            let filtered = allPresets.filter {
+            let filtered = (allPresets + PremiumMoodLibrary.moods).filter {
                 $0.category == category &&
                 $0.requiredCapability.capabilityLevel <= level
             }
@@ -981,20 +1090,47 @@ enum SceneLibrary {
 
 // ── 8a  Content View ─────────────────────────────────────────
 
+enum AppFlowState {
+    case launchScreen
+    case coreApp
+}
+
 struct ContentView: View {
     @EnvironmentObject var homeKit: HomeKitManager
+    @State private var flowState: AppFlowState = .launchScreen
 
     var body: some View {
         Group {
-            if homeKit.isAuthorized {
-                DashboardView()
-            } else {
-                AuthorizationView()
+            switch flowState {
+            case .launchScreen:
+                AuthorizationView(flowState: $flowState)
+            case .coreApp:
+                MainTabView(flowState: $flowState)
             }
         }
-        .animation(.easeInOut(duration: 0.4), value: homeKit.isAuthorized)
+        .animation(.easeInOut(duration: 0.4), value: flowState)
         .task {
             homeKit.connectToHomeKit()
+        }
+    }
+}
+
+struct MainTabView: View {
+    @Binding var flowState: AppFlowState
+
+    var body: some View {
+        TabView {
+            DashboardView(flowState: $flowState)
+                .tabItem { Label("Home", systemImage: "house.fill") }
+
+            IndividualLightControlView()
+                .tabItem { Label("Lights", systemImage: "lightbulb.2.fill") }
+
+            AIMoodGeneratorView()
+                .tabItem { Label("AI Mood", systemImage: "sparkles") }
+
+            SoundSyncView()
+                .tabItem { Label("Sound", systemImage: "waveform") }
         }
     }
 }
@@ -1003,6 +1139,7 @@ struct ContentView: View {
 
 struct AuthorizationView: View {
     @EnvironmentObject var homeKit: HomeKitManager
+    @Binding var flowState: AppFlowState
 
     var body: some View {
         ZStack {
@@ -1054,7 +1191,10 @@ struct AuthorizationView: View {
                             .multilineTextAlignment(.center)
                     }
 
-                    Button { homeKit.requestAuthorization() } label: {
+                    Button {
+                        homeKit.requestAuthorization()
+                        flowState = .coreApp
+                    } label: {
                         HStack(spacing: AuraSpacing.sm) {
                             if homeKit.isLoading {
                                 ProgressView().tint(.white).scaleEffect(0.85)
@@ -1088,6 +1228,7 @@ struct AuthorizationView: View {
 struct DashboardView: View {
     @EnvironmentObject var homeKit: HomeKitManager
     @EnvironmentObject var storeManager: StoreManager
+    @Binding var flowState: AppFlowState
     @State private var showingPaywall = false
     @State private var showingProfile = false
 
@@ -1180,7 +1321,7 @@ struct DashboardView: View {
                     .environmentObject(storeManager)
             }
             .sheet(isPresented: $showingProfile) {
-                ProfileSheetView()
+                ProfileSheetView(flowState: $flowState)
                     .environmentObject(homeKit)
             }
         }
@@ -1220,6 +1361,8 @@ struct DashboardHeaderView: View {
 
 struct ProfileSheetView: View {
     @EnvironmentObject var homeKit: HomeKitManager
+    @Environment(\.dismiss) private var dismiss
+    @Binding var flowState: AppFlowState
 
     private var favoriteMoodNames: [String] {
         homeKit.favoriteMoodNames.sorted()
@@ -1244,6 +1387,13 @@ struct ProfileSheetView: View {
                             ForEach(favoriteMoodNames, id: \.self) { moodName in
                                 Label(moodName, systemImage: "star.fill")
                             }
+                        }
+                    }
+
+                    Section {
+                        Button("Return to Launch Screen") {
+                            dismiss()
+                            flowState = .launchScreen
                         }
                     }
                 }
@@ -1375,7 +1525,7 @@ struct RoomDetailView: View {
 
                     // AI-generated suggestions
                     SuggestionsSection(suggestions: suggestions) { mood in
-                        if mood.isLocked {
+                        if mood.isLocked || mood.isPremium {
                             showingPaywall = true
                         } else {
                             selectedMood = mood
@@ -1389,7 +1539,11 @@ struct RoomDetailView: View {
 
                     // Static preset library
                     PresetLibrarySection(library: library) { mood in
-                        selectedMood = mood
+                        if mood.isPremium && !storeManager.isProUnlocked {
+                            showingPaywall = true
+                        } else {
+                            selectedMood = mood
+                        }
                     }
 
                     Spacer(minLength: AuraSpacing.xxl)
@@ -1534,13 +1688,13 @@ struct MoodCardView: View {
                 RoundedRectangle(cornerRadius: AuraRadius.sm)
                     .fill(LinearGradient(colors: mood.gradientColors, startPoint: .topLeading, endPoint: .bottomTrailing))
                     .frame(height: 90)
-                    .blur(radius: mood.isLocked ? 8 : 0)
+                    .blur(radius: (mood.isLocked || mood.isPremium) ? 8 : 0)
                     .overlay(
                         RoundedRectangle(cornerRadius: AuraRadius.sm)
-                            .fill(mood.isLocked ? Color.white.opacity(0.20) : Color.clear)
+                            .fill((mood.isLocked || mood.isPremium) ? Color.white.opacity(0.20) : Color.clear)
                     )
 
-                if mood.isLocked {
+                if mood.isLocked || mood.isPremium {
                     Image(systemName: "lock.fill")
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.white)
@@ -1548,7 +1702,7 @@ struct MoodCardView: View {
                 }
 
                 if mood.isGenerated {
-                    Text(mood.isLocked ? Strings.paywallTitle : Strings.aiSuggested)
+                    Text((mood.isLocked || mood.isPremium) ? Strings.paywallTitle : Strings.aiSuggested)
                         .font(AuraFont.caption(10))
                         .foregroundColor(.white)
                         .padding(.horizontal, 8).padding(.vertical, 4)
@@ -1686,6 +1840,7 @@ struct MoodDetailSheet: View {
     let onApply: () -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var livingAnimator = LivingLightAnimator()
     @State private var applied = false
 
     private var compatibleLightCount: Int {
@@ -1767,6 +1922,20 @@ struct MoodDetailSheet: View {
                                     SettingChip(icon: "paintpalette", label: "Hue", value: "\(Int(h))°")
                                 }
                             }
+                        }
+
+                        Button {
+                            if livingAnimator.isRunning {
+                                livingAnimator.stop()
+                            } else {
+                                livingAnimator.start(mood: mood, room: room, homeKit: homeKit)
+                            }
+                        } label: {
+                            Label(
+                                livingAnimator.isRunning ? "Stop Living Animation" : "Start Living Animation",
+                                systemImage: livingAnimator.isRunning ? "pause.circle.fill" : "play.circle.fill"
+                            )
+                            .font(AuraFont.caption(15))
                         }
 
                         // Compatibility info
