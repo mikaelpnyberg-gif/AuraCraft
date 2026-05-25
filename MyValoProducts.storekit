@@ -14,21 +14,7 @@
 
   ],
   "products" : [
-    {
-      "displayPrice" : "9.99",
-      "familyShareable" : false,
-      "internalID" : "2DDB7798",
-      "localizations" : [
-        {
-          "description" : "Unlock all premium features",
-          "displayName" : "MyValo Pro",
-          "locale" : "en_GB"
-        }
-      ],
-      "productID" : "com.auracraft.pro.onetime",
-      "referenceName" : "MyValo Pro",
-      "type" : "NonConsumable"
-    }
+
   ],
   "settings" : {
     "_askToBuyEnabled" : false,
@@ -45,7 +31,37 @@
     "_timeRate" : 0
   },
   "subscriptionGroups" : [
-
+    {
+      "id" : "myvalo_pro_group",
+      "localizations" : [
+        {
+          "locale" : "en_US",
+          "name" : "MyValo Pro"
+        }
+      ],
+      "name" : "MyValo Pro",
+      "subscriptions" : [
+        {
+          "displayPrice" : "1.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "MYVALO_PRO_MONTHLY",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlock all premium lighting moods, AI moods, and Sound Sync.",
+              "displayName" : "MyValo Pro Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.myvalo.pro.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "MyValo Pro Monthly",
+          "subscriptionGroupID" : "myvalo_pro_group",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
   ],
   "version" : {
     "major" : 5,
