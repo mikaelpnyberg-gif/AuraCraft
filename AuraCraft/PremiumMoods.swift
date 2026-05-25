@@ -87,6 +87,11 @@ enum PremiumMoodLibrary {
         Spec(name: "Ocean Breathing", description: "Teal, deep blue, and seafoam tones that breathe slowly like reflected water.", category: .livingLights, brightness: 0.58, colors: ["#00C2A8", "#006DCC", "#7DFFB2", "#003049"], style: .living),
         Spec(name: "Neon Pulse", description: "Electric cyan and magenta pulses designed for RGB lamps in lounges and play rooms.", category: .livingLights, brightness: 0.72, colors: ["#00F5FF", "#FF2BD6", "#7B2CFF", "#12122B"], style: .living),
         Spec(name: "Candle Circle", description: "Soft flame tones that drift subtly for dinner tables and calm evening rooms.", category: .livingLights, brightness: 0.40, colors: ["#FFB347", "#FF7A3D", "#B23A48", "#FFF0C2"], style: .living),
-        Spec(name: "Forest Fireflies", description: "Deep woodland greens with small yellow flashes cycling between lamps.", category: .livingLights, brightness: 0.46, colors: ["#0B3D2E", "#1D6B4F", "#C9F227", "#102418"], style: .living)
+        Spec(name: "Forest Fireflies", description: "Deep woodland greens with small yellow flashes cycling between lamps.", category: .livingLights, brightness: 0.46, colors: ["#0B3D2E", "#1D6B4F", "#C9F227", "#102418"], style: .living),
+        Spec(name: "Prism Sweep", description: "Clean rainbow bands that travel gently around the room for a polished showcase effect.", category: .livingLights, brightness: 0.68, colors: ["#FF3B30", "#FFCC00", "#34C759", "#007AFF", "#AF52DE"], style: .living),
+        Spec(name: "Lava Lamp", description: "Molten pink, purple, and orange tones that roll slowly between lamps like liquid color.", category: .livingLights, brightness: 0.56, colors: ["#FF5DA2", "#7B2CFF", "#FF6D00", "#2D00F7"], style: .living),
+        Spec(name: "Northern Tide", description: "Blue-green waves and pale icy highlights that move with a calm coastal rhythm.", category: .livingLights, brightness: 0.60, colors: ["#2A9D8F", "#90E0EF", "#CAF0F8", "#264653"], style: .living),
+        Spec(name: "Sunrise Bloom", description: "A gradual morning motion from rose and peach into soft daylight warmth.", category: .livingLights, brightness: 0.70, colors: ["#FFB3C1", "#FFD6A5", "#FFF1CF", "#A2D2FF"], style: .living),
+        Spec(name: "Club Wave", description: "High-energy cyan, violet, lime, and hot pink waves for party rooms and gaming setups.", category: .livingLights, brightness: 0.82, colors: ["#00E5FF", "#9B5DE5", "#7CFF00", "#F72585"], style: .living)
     ]
 }

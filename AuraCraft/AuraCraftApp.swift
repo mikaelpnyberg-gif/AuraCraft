@@ -1,6 +1,6 @@
 //
-//  AuraCraftApp.swift
-//  AuraCraft
+//  MyValoApp.swift
+//  MyValo
 //
 //  Created by MNyberg on 20/05/2026.
 //
@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct AuraCraftApp: App {
+struct MyValoApp: App {
     @StateObject private var homeKit: HomeKitManager
     @StateObject private var storeManager = StoreManager()
 

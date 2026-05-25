@@ -15,6 +15,11 @@ final class StoreManager: ObservableObject {
     private var transactionUpdatesTask: Task<Void, Never>?
 
     init() {
+        if AppScreenshotMode.isEnabled {
+            isProUnlocked = true
+            return
+        }
+
         transactionUpdatesTask = listenForTransactions()
 
         Task {

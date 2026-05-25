@@ -114,6 +114,8 @@ struct AIMoodGeneratorView: View {
     @EnvironmentObject private var storeManager: StoreManager
     @State private var prompt = ""
     @State private var generatedMood: Mood?
+    @State private var generatedMoodStyle: MoodStyle = .still
+    @State private var movementSpeed: Double = 4
     @State private var isGenerating = false
     @State private var errorMessage: String?
     @State private var showingPaywall = false
@@ -136,6 +138,38 @@ struct AIMoodGeneratorView: View {
                         .textFieldStyle(.roundedBorder)
                         .disabled(!storeManager.isProUnlocked)
                         .opacity(storeManager.isProUnlocked ? 1 : 0.55)
+
+                    VStack(alignment: .leading, spacing: AuraSpacing.sm) {
+                        Text("Mood Motion")
+                            .font(AuraFont.caption(12))
+                            .foregroundColor(AuraColor.textTertiary)
+                            .kerning(1.5)
+                            .textCase(.uppercase)
+
+                        Picker("Mood Motion", selection: $generatedMoodStyle) {
+                            Text("Still").tag(MoodStyle.still)
+                            Text("Living").tag(MoodStyle.living)
+                        }
+                        .pickerStyle(.segmented)
+                        .disabled(!storeManager.isProUnlocked)
+
+                        if generatedMoodStyle == .living {
+                            VStack(alignment: .leading, spacing: AuraSpacing.xs) {
+                                HStack {
+                                    Text("Movement Speed")
+                                        .font(AuraFont.body(13))
+                                        .foregroundColor(AuraColor.textSecondary)
+                                    Spacer()
+                                    Text("Every \(Int(movementSpeed))s")
+                                        .font(AuraFont.caption(12))
+                                        .foregroundColor(AuraColor.textPrimary)
+                                }
+                                Slider(value: $movementSpeed, in: 3...8, step: 1)
+                                    .disabled(!storeManager.isProUnlocked)
+                            }
+                        }
+                    }
+                    .opacity(storeManager.isProUnlocked ? 1 : 0.55)
 
                     Button {
                         guard storeManager.isProUnlocked else {
@@ -192,14 +226,18 @@ struct AIMoodGeneratorView: View {
             let settings = response.colors.map { LightSetting(brightness: response.brightness, hex: $0) }
             generatedMood = Mood(
                 name: response.name,
-                description: response.description,
-                category: .entertainment,
+                description: generatedMoodStyle == .living
+                    ? "\(response.description) Living movement updates every \(Int(movementSpeed)) seconds."
+                    : response.description,
+                category: generatedMoodStyle == .living ? .livingLights : .entertainment,
                 isGenerated: true,
                 isPremium: true,
+                style: generatedMoodStyle,
                 requiredCapability: .fullRGB,
                 lightSetting: settings.first ?? LightSetting(brightness: response.brightness),
                 lightSettings: settings,
-                gradientColors: response.colors.map(ColorHex.color(from:))
+                gradientColors: response.colors.map(ColorHex.color(from:)),
+                animationInterval: movementSpeed
             )
         } catch {
             errorMessage = error.localizedDescription

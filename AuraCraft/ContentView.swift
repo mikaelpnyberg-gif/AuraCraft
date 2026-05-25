@@ -1,5 +1,5 @@
 // ╔══════════════════════════════════════════════════════════════════╗
-// ║  AuraCraft.swift                                                  ║
+// ║  MyValo.swift                                                     ║
 // ║  Intelligent Lighting Design for Apple Home                       ║
 // ║  Architecture: MVVM + Service Layer (HomeKit Mocked)              ║
 // ║  Target: iOS 16+  |  SwiftUI  |  Localized: EN / FI              ║
@@ -54,7 +54,7 @@ private func L(
 
 enum Strings {
     // App shell
-    static let appName          = "AuraCraft"
+    static let appName          = "MyValo"
     static let appTagline       = L("Lighting Moods", fi: "Valaistustunnelmat", es: "Ambientes de luz", ja: "照明ムード", de: "Lichtstimmungen", sv: "Ljuslägen", zh: "灯光氛围")
     // Dashboard
     static let homeTitle        = L("My Home", fi: "Kotini", es: "Mi hogar", ja: "マイホーム", de: "Mein Zuhause", sv: "Mitt hem", zh: "我的家")
@@ -72,13 +72,13 @@ enum Strings {
     // Auth
     static let homeAccessTitle  = L("Home Access", fi: "Kodin käyttöoikeus", es: "Acceso al hogar", ja: "ホームへのアクセス", de: "Zugriff auf Zuhause", sv: "Hemåtkomst", zh: "家庭访问权限")
     static let homeAccessDesc   = L(
-        "AuraCraft needs access to your Apple Home to illuminate your world.",
-        fi: "AuraCraft tarvitsee pääsyn Apple Kotiisi voidakseen valaista maailmaasi.",
-        es: "AuraCraft necesita acceso a tu Apple Home para iluminar tu mundo.",
-        ja: "AuraCraftがあなたの世界を照らすにはApple Homeへのアクセスが必要です。",
-        de: "AuraCraft benötigt Zugriff auf dein Apple Home, um deine Welt zu beleuchten.",
-        sv: "AuraCraft behöver åtkomst till ditt Apple-hem för att lysa upp din värld.",
-        zh: "AuraCraft 需要访问你的 Apple 家庭，才能点亮你的世界。"
+        "MyValo needs access to your Apple Home to illuminate your world.",
+        fi: "MyValo tarvitsee pääsyn Apple Kotiisi voidakseen valaista maailmaasi.",
+        es: "MyValo necesita acceso a tu Apple Home para iluminar tu mundo.",
+        ja: "MyValoがあなたの世界を照らすにはApple Homeへのアクセスが必要です。",
+        de: "MyValo benötigt Zugriff auf dein Apple Home, um deine Welt zu beleuchten.",
+        sv: "MyValo behöver åtkomst till ditt Apple-hem för att lysa upp din värld.",
+        zh: "MyValo 需要访问你的 Apple 家庭，才能点亮你的世界。"
     )
     // Badges
     static let aiSuggested      = L("AI Suggested", fi: "AI-suositus", es: "Sugerido por IA", ja: "AIの提案", de: "KI-Vorschlag", sv: "AI-förslag", zh: "AI 推荐")
@@ -104,7 +104,7 @@ enum Strings {
           zh: "\(total) 盏灯中有 \(c) 盏会响应")
     }
     // StoreKit / Paywall
-    static let paywallTitle            = L("AuraCraft Pro", fi: "AuraCraft Pro", es: "AuraCraft Pro", ja: "AuraCraft Pro", de: "AuraCraft Pro", sv: "AuraCraft Pro", zh: "AuraCraft Pro")
+    static let paywallTitle            = L("MyValo Pro", fi: "MyValo Pro", es: "MyValo Pro", ja: "MyValo Pro", de: "MyValo Pro", sv: "MyValo Pro", zh: "MyValo Pro")
     static let paywallSubtitle         = L("Unlock the full lighting studio with one simple purchase.", fi: "Avaa koko valaistusstudio yhdellä ostolla.", es: "Desbloquea todo el estudio de iluminación con una compra única.", ja: "一度の購入で照明スタジオ全体を解除できます。", de: "Schalte das komplette Lichtstudio mit einem einmaligen Kauf frei.", sv: "Lås upp hela ljusstudion med ett enda köp.", zh: "一次购买即可解锁完整灯光工作室。")
     static let benefitUnlimitedRooms   = L("Unlimited rooms", fi: "Rajattomasti huoneita", es: "Habitaciones ilimitadas", ja: "無制限の部屋", de: "Unbegrenzte Räume", sv: "Obegränsat antal rum", zh: "无限房间")
     static let benefitAISuggestions    = L("AI lighting suggestions", fi: "AI-valaistusehdotukset", es: "Sugerencias de iluminación con IA", ja: "AI照明提案", de: "KI-Lichtvorschläge", sv: "AI-ljusförslag", zh: "AI 灯光建议")
@@ -114,7 +114,7 @@ enum Strings {
     static let purchasePending         = L("Purchase is pending approval.", fi: "Osto odottaa hyväksyntää.", es: "La compra está pendiente de aprobación.", ja: "購入は承認待ちです。", de: "Der Kauf wartet auf Genehmigung.", sv: "Köpet väntar på godkännande.", zh: "购买正在等待批准。")
     static let purchaseVerificationFailed = L("We could not verify this purchase.", fi: "Ostoa ei voitu vahvistaa.", es: "No pudimos verificar esta compra.", ja: "この購入を確認できませんでした。", de: "Wir konnten diesen Kauf nicht verifizieren.", sv: "Vi kunde inte verifiera köpet.", zh: "无法验证此购买。")
     static let lockedAISuggestion      = L("Pro suggestion", fi: "Pro-ehdotus", es: "Sugerencia Pro", ja: "Pro提案", de: "Pro-Vorschlag", sv: "Pro-förslag", zh: "Pro 建议")
-    static let lockedAISuggestionDesc  = L("Unlock AuraCraft Pro to reveal this AI mood.", fi: "Avaa AuraCraft Pro nähdäksesi tämän AI-tunnelman.", es: "Desbloquea AuraCraft Pro para revelar este ambiente con IA.", ja: "AuraCraft Proを解除してこのAIムードを表示します。", de: "Schalte AuraCraft Pro frei, um diese KI-Stimmung zu sehen.", sv: "Lås upp AuraCraft Pro för att visa denna AI-stämning.", zh: "解锁 AuraCraft Pro 以显示此 AI 氛围。")
+    static let lockedAISuggestionDesc  = L("Unlock MyValo Pro to reveal this AI mood.", fi: "Avaa MyValo Pro nähdäksesi tämän AI-tunnelman.", es: "Desbloquea MyValo Pro para revelar este ambiente con IA.", ja: "MyValo Proを解除してこのAIムードを表示します。", de: "Schalte MyValo Pro frei, um diese KI-Stimmung zu sehen.", sv: "Lås upp MyValo Pro för att visa denna AI-stämning.", zh: "解锁 MyValo Pro 以显示此 AI 氛围。")
     static let lockedRoomsSubtitle     = L("Upgrade for unlimited rooms", fi: "Päivitä rajattomiin huoneisiin", es: "Actualiza para habitaciones ilimitadas", ja: "アップグレードで部屋数無制限", de: "Upgrade für unbegrenzte Räume", sv: "Uppgradera för obegränsade rum", zh: "升级以解锁无限房间")
     static let hardwareUpgradeTitle    = L("Want full color?", fi: "Haluatko täyden värivalon?", es: "¿Quieres color completo?", ja: "フルカラーにしますか？", de: "Volle Farbe gewünscht?", sv: "Vill du ha full färg?", zh: "想要全彩灯光？")
     static let hardwareUpgradeSubtitle = L("Upgrade your lights", fi: "Päivitä valaisimesi", es: "Mejora tus luces", ja: "ライトをアップグレード", de: "Rüste deine Lichter auf", sv: "Uppgradera dina lampor", zh: "升级你的灯具")
@@ -435,6 +435,7 @@ struct Mood: Identifiable {
     var lightSetting: LightSetting
     var lightSettings: [LightSetting]
     var gradientColors: [Color]
+    var animationInterval: TimeInterval
 
     init(
         id: UUID = UUID(),
@@ -448,7 +449,8 @@ struct Mood: Identifiable {
         requiredCapability: LightCapability,
         lightSetting: LightSetting,
         lightSettings: [LightSetting]? = nil,
-        gradientColors: [Color]? = nil
+        gradientColors: [Color]? = nil,
+        animationInterval: TimeInterval = 4
     ) {
         self.id = id
         self.name = name
@@ -462,6 +464,7 @@ struct Mood: Identifiable {
         self.lightSetting = lightSetting
         self.lightSettings = lightSettings ?? [lightSetting]
         self.gradientColors = gradientColors ?? category.gradientColors
+        self.animationInterval = min(max(animationInterval, 3), 8)
     }
 }
 
@@ -535,10 +538,20 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
     }
 
     func connectToHomeKit() {
+        if AppScreenshotMode.isEnabled {
+            loadScreenshotHome()
+            return
+        }
+
         startHomeKitSession()
     }
 
     func refreshHomes() {
+        if AppScreenshotMode.isEnabled {
+            loadScreenshotHome()
+            return
+        }
+
         guard let manager = hmManager else {
             startHomeKitSession()
             return
@@ -590,7 +603,7 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
                 self.isLoading = false
                 self.rooms = []
                 self.lightBindings = [:]
-                self.statusMessage = "No homes were returned by HomeKit. Confirm this iPhone is signed into the same Apple ID as the Home app and that AuraCraft has Home access."
+                self.statusMessage = "No homes were returned by HomeKit. Confirm this iPhone is signed into the same Apple ID as the Home app and that MyValo has Home access."
             }
             return
         }
@@ -638,6 +651,84 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
                 ? "HomeKit is connected, but no rooms with controllable lights were found."
                 : nil
         }
+    }
+
+    // MARK: Screenshot Demo Data
+
+    private func loadScreenshotHome() {
+        let livingRoom = Room(
+            name: "Living Room",
+            icon: "sofa.fill",
+            lights: [
+                Light(name: "Ceiling Halo", capability: .fullRGB),
+                Light(name: "Window Wash", capability: .fullRGB),
+                Light(name: "Media Strip", capability: .fullRGB),
+                Light(name: "Reading Lamp", capability: .colorTemperature),
+                Light(name: "Corner Glow", capability: .fullRGB),
+                Light(name: "Shelf Spot", capability: .dimmableOnly)
+            ]
+        )
+
+        let kitchen = Room(
+            name: "Kitchen",
+            icon: "fork.knife",
+            lights: [
+                Light(name: "Island Pendants", capability: .colorTemperature),
+                Light(name: "Counter Strip", capability: .fullRGB),
+                Light(name: "Dining Globe", capability: .colorTemperature),
+                Light(name: "Cabinet Accent", capability: .fullRGB)
+            ]
+        )
+
+        let bedroom = Room(
+            name: "Bedroom",
+            icon: "bed.double.fill",
+            lights: [
+                Light(name: "Bedside Left", capability: .fullRGB),
+                Light(name: "Bedside Right", capability: .fullRGB),
+                Light(name: "Wardrobe Wash", capability: .colorTemperature),
+                Light(name: "Ceiling Soft", capability: .dimmableOnly),
+                Light(name: "Window Glow", capability: .fullRGB)
+            ]
+        )
+
+        let demoRooms = [livingRoom, kitchen, bedroom]
+        rooms = demoRooms
+        isAuthorized = true
+        isLoading = false
+        statusMessage = "Screenshot demo mode: premium unlocked with mock HomeKit rooms."
+        lightBindings = [:]
+        appliedMoods = [
+            livingRoom.id: Mood(
+                name: "Aurora Flow",
+                description: "Premium Living Lights scene for App Store screenshots.",
+                category: .livingLights,
+                isPremium: true,
+                style: .living,
+                requiredCapability: .fullRGB,
+                lightSetting: LightSetting(brightness: 0.62, hex: "#00E087"),
+                lightSettings: [
+                    LightSetting(brightness: 0.62, hex: "#00E087"),
+                    LightSetting(brightness: 0.62, hex: "#6F35FF"),
+                    LightSetting(brightness: 0.62, hex: "#7DE8FF")
+                ],
+                gradientColors: [ColorHex.color(from: "#00E087"), ColorHex.color(from: "#6F35FF")]
+            ),
+            kitchen.id: Mood(
+                name: "Golden Hour Studio",
+                description: "Warm premium lighting for a polished kitchen scene.",
+                category: .productivity,
+                isPremium: true,
+                requiredCapability: .fullRGB,
+                lightSetting: LightSetting(brightness: 0.74, hex: "#FFB347"),
+                lightSettings: [
+                    LightSetting(brightness: 0.74, hex: "#FFB347"),
+                    LightSetting(brightness: 0.74, hex: "#FFD6A5"),
+                    LightSetting(brightness: 0.74, hex: "#FFF1CF")
+                ],
+                gradientColors: [ColorHex.color(from: "#FFB347"), ColorHex.color(from: "#FFD6A5")]
+            )
+        ]
     }
 
     // MARK: Scene Application
@@ -973,13 +1064,13 @@ enum MoodEngine {
 enum SceneLibrary {
 
     /// Returns all compatible presets grouped by category for a given room.
-    static func presets(compatibleWith room: Room, style: MoodStyle = .still) -> [MoodCategory: [Mood]] {
+    static func presets(compatibleWith room: Room, style: MoodStyle? = nil) -> [MoodCategory: [Mood]] {
         let level = room.dominantCapability.capabilityLevel
         var result: [MoodCategory: [Mood]] = [:]
         for category in MoodCategory.allCases {
             let filtered = (allPresets + PremiumMoodLibrary.moods).filter {
                 $0.category == category &&
-                $0.style == style &&
+                (style == nil || $0.style == style) &&
                 $0.requiredCapability.capabilityLevel <= level
             }
             if !filtered.isEmpty { result[category] = filtered }
@@ -1111,7 +1202,7 @@ enum AppFlowState {
 
 struct ContentView: View {
     @EnvironmentObject var homeKit: HomeKitManager
-    @State private var flowState: AppFlowState = .launchScreen
+    @State private var flowState: AppFlowState = AppScreenshotMode.isEnabled ? .coreApp : .launchScreen
 
     var body: some View {
         Group {
@@ -1164,7 +1255,7 @@ struct AuthorizationView: View {
 
                 // Logotype
                 VStack(spacing: AuraSpacing.md) {
-                    Image("AuraCraftLogo")
+                    Image("MyValoLogo")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 96, height: 96)
@@ -1532,6 +1623,20 @@ struct CapabilityBadgesView: View {
 
 // ── 8g  Room Detail View ─────────────────────────────────────
 
+private enum MoodBrowseMode: String, CaseIterable, Identifiable {
+    case still
+    case moving
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .still: return "Still Lights"
+        case .moving: return "Moving Lights"
+        }
+    }
+}
+
 struct RoomDetailView: View {
     @EnvironmentObject var homeKit: HomeKitManager
     @EnvironmentObject var storeManager: StoreManager
@@ -1539,6 +1644,7 @@ struct RoomDetailView: View {
 
     @State private var selectedMood: Mood?
     @State private var showingPaywall = false
+    @State private var browseMode: MoodBrowseMode = .still
 
     private var suggestions: [Mood] { MoodEngine.generateSuggestions(for: room, isProUnlocked: storeManager.isProUnlocked) }
     private var stillLibrary: [MoodCategory: [Mood]] { SceneLibrary.presets(compatibleWith: room, style: .still) }
@@ -1587,24 +1693,28 @@ struct RoomDetailView: View {
                             .padding(.horizontal, AuraSpacing.lg)
                     }
 
-                    // Static and living preset libraries
-                    PresetLibrarySection(
-                        title: "Still Lights",
-                        icon: "circle.grid.2x2.fill",
-                        iconColor: AuraColor.textSecondary,
-                        library: stillLibrary,
-                        isProUnlocked: storeManager.isProUnlocked,
-                        onSelect: selectOrUpsell
-                    )
+                    MoodBrowseModePicker(selection: $browseMode)
+                        .padding(.horizontal, AuraSpacing.lg)
 
-                    PresetLibrarySection(
-                        title: "Living Lights",
-                        icon: "waveform.path.ecg",
-                        iconColor: AuraColor.accent,
-                        library: livingLibrary,
-                        isProUnlocked: storeManager.isProUnlocked,
-                        onSelect: selectOrUpsell
-                    )
+                    if browseMode == .still {
+                        PresetLibrarySection(
+                            title: "Still Lights",
+                            icon: "circle.grid.2x2.fill",
+                            iconColor: AuraColor.textSecondary,
+                            library: stillLibrary,
+                            isProUnlocked: storeManager.isProUnlocked,
+                            onSelect: selectOrUpsell
+                        )
+                    } else {
+                        PresetLibrarySection(
+                            title: "Moving Lights",
+                            icon: "waveform.path.ecg",
+                            iconColor: AuraColor.accent,
+                            library: livingLibrary,
+                            isProUnlocked: storeManager.isProUnlocked,
+                            onSelect: selectOrUpsell
+                        )
+                    }
 
                     Spacer(minLength: AuraSpacing.xxl)
                 }
@@ -1630,7 +1740,26 @@ struct RoomDetailView: View {
     }
 }
 
-// ── 8h  Room Hardware Header ──────────────────────────────────
+// ── 8h  Mood Browser Controls ─────────────────────────────────
+
+private struct MoodBrowseModePicker: View {
+    @Binding var selection: MoodBrowseMode
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: AuraSpacing.sm) {
+            SectionHeaderView(title: "Browse Moods", icon: "slider.horizontal.3", iconColor: AuraColor.textSecondary)
+
+            Picker("Browse Moods", selection: $selection) {
+                ForEach(MoodBrowseMode.allCases) { mode in
+                    Text(mode.title).tag(mode)
+                }
+            }
+            .pickerStyle(.segmented)
+        }
+    }
+}
+
+// ── 8i  Room Hardware Header ──────────────────────────────────
 
 struct RoomHardwareHeaderView: View {
     let room: Room
@@ -2007,6 +2136,9 @@ struct MoodDetailSheet: View {
                                 }
                                 if let h = mood.lightSetting.hue {
                                     SettingChip(icon: "paintpalette", label: "Hue", value: "\(Int(h))°")
+                                }
+                                if mood.style == .living {
+                                    SettingChip(icon: "timer", label: "Movement", value: "\(Int(mood.animationInterval))s")
                                 }
                             }
                         }

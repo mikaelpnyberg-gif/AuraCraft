@@ -1,6 +1,6 @@
 //
 //  Item.swift
-//  AuraCraft
+//  MyValo
 //
 //  Created by MNyberg on 20/05/2026.
 //

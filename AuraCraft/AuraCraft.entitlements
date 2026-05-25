@@ -8,7 +8,7 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.com.yourname.AuraCraft</string>
+		<string>group.com.yourname.MyValo</string>
 	</array>
 	<key>inter-app-audio</key>
 	<true/>

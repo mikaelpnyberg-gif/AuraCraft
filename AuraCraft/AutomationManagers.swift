@@ -8,13 +8,13 @@ final class LivingLightAnimator: ObservableObject {
     @Published private(set) var activeMoodName: String?
 
     private var task: Task<Void, Never>?
-    private let updateInterval: UInt64 = 4_000_000_000
 
     func start(mood: Mood, room: Room, homeKit: HomeKitManager) {
         stop()
         guard !mood.lightSettings.isEmpty else { return }
         isRunning = true
         activeMoodName = mood.name
+        let updateInterval = UInt64(mood.animationInterval * 1_000_000_000)
 
         task = Task { [weak self, weak homeKit] in
             var index = 0
@@ -44,10 +44,12 @@ final class LivingLightAnimator: ObservableObject {
             isGenerated: mood.isGenerated,
             isLocked: mood.isLocked,
             isPremium: mood.isPremium,
+            style: mood.style,
             requiredCapability: mood.requiredCapability,
             lightSetting: settings.first ?? mood.lightSetting,
             lightSettings: settings,
-            gradientColors: settings.map(\.previewColor)
+            gradientColors: settings.map(\.previewColor),
+            animationInterval: mood.animationInterval
         )
     }
 }

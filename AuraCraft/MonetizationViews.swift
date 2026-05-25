@@ -11,7 +11,7 @@ struct PaywallView: View {
             ScrollView {
                 VStack(spacing: AuraSpacing.xl) {
                     VStack(spacing: AuraSpacing.md) {
-                        Image("AuraCraftLogo")
+                        Image("MyValoLogo")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 78, height: 78)
