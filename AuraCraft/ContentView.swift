@@ -366,11 +366,17 @@ enum ColorHex {
 
 // ── 3e  Mood Category ────────────────────────────────────────
 
+enum MoodStyle {
+    case still
+    case living
+}
+
 enum MoodCategory: String, CaseIterable, Identifiable {
     case productivity   = "productivity"
     case relaxation     = "relaxation"
     case entertainment  = "entertainment"
     case nature         = "nature"
+    case livingLights   = "living_lights"
 
     var id: String { rawValue }
 
@@ -380,6 +386,7 @@ enum MoodCategory: String, CaseIterable, Identifiable {
         case .relaxation:    return Strings.relaxation
         case .entertainment: return Strings.entertainment
         case .nature:        return Strings.nature
+        case .livingLights:  return "Living Lights"
         }
     }
 
@@ -389,6 +396,7 @@ enum MoodCategory: String, CaseIterable, Identifiable {
         case .relaxation:    return "moon.stars.fill"
         case .entertainment: return "sparkles"
         case .nature:        return "leaf.fill"
+        case .livingLights:  return "waveform.path.ecg"
         }
     }
 
@@ -402,6 +410,8 @@ enum MoodCategory: String, CaseIterable, Identifiable {
             return [Color(red: 0.95, green: 0.48, blue: 0.38), Color(red: 0.72, green: 0.28, blue: 0.58)]
         case .nature:
             return [Color(red: 0.38, green: 0.68, blue: 0.48), Color(red: 0.22, green: 0.52, blue: 0.36)]
+        case .livingLights:
+            return [Color(red: 0.98, green: 0.48, blue: 0.22), Color(red: 0.55, green: 0.18, blue: 0.78)]
         }
     }
 }
@@ -419,6 +429,7 @@ struct Mood: Identifiable {
     var isGenerated: Bool
     var isLocked: Bool
     var isPremium: Bool
+    var style: MoodStyle
     /// Minimum hardware required; lights below this level receive a brightness-only fallback.
     var requiredCapability: LightCapability
     var lightSetting: LightSetting
@@ -433,6 +444,7 @@ struct Mood: Identifiable {
         isGenerated: Bool = false,
         isLocked: Bool = false,
         isPremium: Bool = false,
+        style: MoodStyle = .still,
         requiredCapability: LightCapability,
         lightSetting: LightSetting,
         lightSettings: [LightSetting]? = nil,
@@ -445,6 +457,7 @@ struct Mood: Identifiable {
         self.isGenerated = isGenerated
         self.isLocked = isLocked
         self.isPremium = isPremium
+        self.style = style
         self.requiredCapability = requiredCapability
         self.lightSetting = lightSetting
         self.lightSettings = lightSettings ?? [lightSetting]
@@ -960,12 +973,13 @@ enum MoodEngine {
 enum SceneLibrary {
 
     /// Returns all compatible presets grouped by category for a given room.
-    static func presets(compatibleWith room: Room) -> [MoodCategory: [Mood]] {
+    static func presets(compatibleWith room: Room, style: MoodStyle = .still) -> [MoodCategory: [Mood]] {
         let level = room.dominantCapability.capabilityLevel
         var result: [MoodCategory: [Mood]] = [:]
         for category in MoodCategory.allCases {
             let filtered = (allPresets + PremiumMoodLibrary.moods).filter {
                 $0.category == category &&
+                $0.style == style &&
                 $0.requiredCapability.capabilityLevel <= level
             }
             if !filtered.isEmpty { result[category] = filtered }
@@ -1260,6 +1274,13 @@ struct DashboardView: View {
                         .padding(.horizontal, AuraSpacing.lg)
                         .padding(.top, AuraSpacing.sm)
 
+                        if !storeManager.isProUnlocked {
+                            GoPremiumBanner {
+                                showingPaywall = true
+                            }
+                            .padding(.horizontal, AuraSpacing.lg)
+                        }
+
                         // ── Room grid
                         VStack(alignment: .leading, spacing: AuraSpacing.md) {
                             HStack {
@@ -1323,6 +1344,7 @@ struct DashboardView: View {
             .sheet(isPresented: $showingProfile) {
                 ProfileSheetView(flowState: $flowState)
                     .environmentObject(homeKit)
+                    .environmentObject(storeManager)
             }
         }
     }
@@ -1361,8 +1383,10 @@ struct DashboardHeaderView: View {
 
 struct ProfileSheetView: View {
     @EnvironmentObject var homeKit: HomeKitManager
+    @EnvironmentObject var storeManager: StoreManager
     @Environment(\.dismiss) private var dismiss
     @Binding var flowState: AppFlowState
+    @State private var showingPaywall = false
 
     private var favoriteMoodNames: [String] {
         homeKit.favoriteMoodNames.sorted()
@@ -1374,6 +1398,16 @@ struct ProfileSheetView: View {
                 AuraColor.background.ignoresSafeArea()
 
                 List {
+                    if !storeManager.isProUnlocked {
+                        Section {
+                            GoPremiumBanner {
+                                showingPaywall = true
+                            }
+                            .listRowBackground(Color.clear)
+                            .listRowInsets(EdgeInsets())
+                        }
+                    }
+
                     Section("Home") {
                         Label("\(homeKit.totalLightCount) total lights", systemImage: "lightbulb.2.fill")
                         Label("\(homeKit.rooms.count) rooms", systemImage: "house.fill")
@@ -1403,6 +1437,10 @@ struct ProfileSheetView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .presentationDetents([.medium, .large])
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
+                .environmentObject(storeManager)
+        }
     }
 }
 
@@ -1502,8 +1540,17 @@ struct RoomDetailView: View {
     @State private var selectedMood: Mood?
     @State private var showingPaywall = false
 
-    private var suggestions: [Mood]                   { MoodEngine.generateSuggestions(for: room, isProUnlocked: storeManager.isProUnlocked) }
-    private var library: [MoodCategory: [Mood]]       { SceneLibrary.presets(compatibleWith: room) }
+    private var suggestions: [Mood] { MoodEngine.generateSuggestions(for: room, isProUnlocked: storeManager.isProUnlocked) }
+    private var stillLibrary: [MoodCategory: [Mood]] { SceneLibrary.presets(compatibleWith: room, style: .still) }
+    private var livingLibrary: [MoodCategory: [Mood]] { SceneLibrary.presets(compatibleWith: room, style: .living) }
+
+    private func selectOrUpsell(_ mood: Mood) {
+        if mood.isLocked || (mood.isPremium && !storeManager.isProUnlocked) {
+            showingPaywall = true
+        } else {
+            selectedMood = mood
+        }
+    }
 
     var body: some View {
         ZStack {
@@ -1517,6 +1564,13 @@ struct RoomDetailView: View {
                         .padding(.horizontal, AuraSpacing.lg)
                         .padding(.top, AuraSpacing.sm)
 
+                    if !storeManager.isProUnlocked {
+                        GoPremiumBanner {
+                            showingPaywall = true
+                        }
+                        .padding(.horizontal, AuraSpacing.lg)
+                    }
+
                     // Active scene banner
                     if let current = homeKit.currentMood(for: room) {
                         ActiveSceneBannerView(mood: current)
@@ -1524,12 +1578,8 @@ struct RoomDetailView: View {
                     }
 
                     // AI-generated suggestions
-                    SuggestionsSection(suggestions: suggestions) { mood in
-                        if mood.isLocked || mood.isPremium {
-                            showingPaywall = true
-                        } else {
-                            selectedMood = mood
-                        }
+                    SuggestionsSection(suggestions: suggestions, isProUnlocked: storeManager.isProUnlocked) { mood in
+                        selectOrUpsell(mood)
                     }
 
                     if !room.hasRGB {
@@ -1537,14 +1587,24 @@ struct RoomDetailView: View {
                             .padding(.horizontal, AuraSpacing.lg)
                     }
 
-                    // Static preset library
-                    PresetLibrarySection(library: library) { mood in
-                        if mood.isPremium && !storeManager.isProUnlocked {
-                            showingPaywall = true
-                        } else {
-                            selectedMood = mood
-                        }
-                    }
+                    // Static and living preset libraries
+                    PresetLibrarySection(
+                        title: "Still Lights",
+                        icon: "circle.grid.2x2.fill",
+                        iconColor: AuraColor.textSecondary,
+                        library: stillLibrary,
+                        isProUnlocked: storeManager.isProUnlocked,
+                        onSelect: selectOrUpsell
+                    )
+
+                    PresetLibrarySection(
+                        title: "Living Lights",
+                        icon: "waveform.path.ecg",
+                        iconColor: AuraColor.accent,
+                        library: livingLibrary,
+                        isProUnlocked: storeManager.isProUnlocked,
+                        onSelect: selectOrUpsell
+                    )
 
                     Spacer(minLength: AuraSpacing.xxl)
                 }
@@ -1635,6 +1695,7 @@ struct ActiveSceneBannerView: View {
 
 struct SuggestionsSection: View {
     let suggestions: [Mood]
+    let isProUnlocked: Bool
     let onSelect: (Mood) -> Void
 
     var body: some View {
@@ -1645,7 +1706,7 @@ struct SuggestionsSection: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: AuraSpacing.md) {
                     ForEach(suggestions) { mood in
-                        MoodCardView(mood: mood)
+                        MoodCardView(mood: mood, isProUnlocked: isProUnlocked)
                             .onTapGesture { onSelect(mood) }
                     }
                 }
@@ -1679,6 +1740,11 @@ struct SectionHeaderView: View {
 
 struct MoodCardView: View {
     let mood: Mood
+    var isProUnlocked = false
+
+    private var isLockedForUser: Bool {
+        mood.isLocked || (mood.isPremium && !isProUnlocked)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: AuraSpacing.sm) {
@@ -1688,13 +1754,13 @@ struct MoodCardView: View {
                 RoundedRectangle(cornerRadius: AuraRadius.sm)
                     .fill(LinearGradient(colors: mood.gradientColors, startPoint: .topLeading, endPoint: .bottomTrailing))
                     .frame(height: 90)
-                    .blur(radius: (mood.isLocked || mood.isPremium) ? 8 : 0)
+                    .blur(radius: isLockedForUser ? 8 : 0)
                     .overlay(
                         RoundedRectangle(cornerRadius: AuraRadius.sm)
-                            .fill((mood.isLocked || mood.isPremium) ? Color.white.opacity(0.20) : Color.clear)
+                            .fill(isLockedForUser ? Color.white.opacity(0.20) : Color.clear)
                     )
 
-                if mood.isLocked || mood.isPremium {
+                if isLockedForUser {
                     Image(systemName: "lock.fill")
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(.white)
@@ -1702,7 +1768,7 @@ struct MoodCardView: View {
                 }
 
                 if mood.isGenerated {
-                    Text((mood.isLocked || mood.isPremium) ? Strings.paywallTitle : Strings.aiSuggested)
+                    Text(isLockedForUser ? Strings.paywallTitle : Strings.aiSuggested)
                         .font(AuraFont.caption(10))
                         .foregroundColor(.white)
                         .padding(.horizontal, 8).padding(.vertical, 4)
@@ -1740,7 +1806,11 @@ struct MoodCardView: View {
 // ── 8m  Preset Library Section ────────────────────────────────
 
 struct PresetLibrarySection: View {
+    let title: String
+    let icon: String
+    let iconColor: Color
     let library: [MoodCategory: [Mood]]
+    let isProUnlocked: Bool
     let onSelect: (Mood) -> Void
 
     private var orderedCategories: [MoodCategory] {
@@ -1749,13 +1819,14 @@ struct PresetLibrarySection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: AuraSpacing.lg) {
-            SectionHeaderView(title: Strings.moodLibrary, icon: "books.vertical.fill", iconColor: AuraColor.textSecondary)
+            SectionHeaderView(title: title, icon: icon, iconColor: iconColor)
                 .padding(.horizontal, AuraSpacing.lg)
 
             ForEach(orderedCategories) { category in
                 CategorySection(
                     category: category,
                     moods: library[category] ?? [],
+                    isProUnlocked: isProUnlocked,
                     onSelect: onSelect
                 )
             }
@@ -1768,6 +1839,7 @@ struct PresetLibrarySection: View {
 struct CategorySection: View {
     let category: MoodCategory
     let moods: [Mood]
+    let isProUnlocked: Bool
     let onSelect: (Mood) -> Void
 
     var body: some View {
@@ -1790,7 +1862,7 @@ struct CategorySection: View {
 
             VStack(spacing: AuraSpacing.sm) {
                 ForEach(moods) { mood in
-                    LibraryRowView(mood: mood)
+                    LibraryRowView(mood: mood, isProUnlocked: isProUnlocked)
                         .padding(.horizontal, AuraSpacing.lg)
                         .onTapGesture { onSelect(mood) }
                 }
@@ -1803,12 +1875,27 @@ struct CategorySection: View {
 
 struct LibraryRowView: View {
     let mood: Mood
+    var isProUnlocked = false
+
+    private var isLockedForUser: Bool {
+        mood.isLocked || (mood.isPremium && !isProUnlocked)
+    }
 
     var body: some View {
         HStack(spacing: AuraSpacing.md) {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(LinearGradient(colors: mood.gradientColors, startPoint: .topLeading, endPoint: .bottomTrailing))
-                .frame(width: 52, height: 52)
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(LinearGradient(colors: mood.gradientColors, startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .frame(width: 52, height: 52)
+                    .blur(radius: isLockedForUser ? 5 : 0)
+
+                if isLockedForUser {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.white)
+                }
+            }
+            .frame(width: 52, height: 52)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(mood.name)
@@ -1822,9 +1909,9 @@ struct LibraryRowView: View {
 
             Spacer()
 
-            Image(systemName: "chevron.right")
+            Image(systemName: isLockedForUser ? "lock.fill" : "chevron.right")
                 .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(AuraColor.textTertiary)
+                .foregroundColor(isLockedForUser ? AuraColor.accent : AuraColor.textTertiary)
         }
         .auraCard(padding: AuraSpacing.sm)
     }
@@ -1924,18 +2011,20 @@ struct MoodDetailSheet: View {
                             }
                         }
 
-                        Button {
-                            if livingAnimator.isRunning {
-                                livingAnimator.stop()
-                            } else {
-                                livingAnimator.start(mood: mood, room: room, homeKit: homeKit)
+                        if mood.style == .living {
+                            Button {
+                                if livingAnimator.isRunning {
+                                    livingAnimator.stop()
+                                } else {
+                                    livingAnimator.start(mood: mood, room: room, homeKit: homeKit)
+                                }
+                            } label: {
+                                Label(
+                                    livingAnimator.isRunning ? "Stop Living Animation" : "Start Living Animation",
+                                    systemImage: livingAnimator.isRunning ? "pause.circle.fill" : "play.circle.fill"
+                                )
+                                .font(AuraFont.caption(15))
                             }
-                        } label: {
-                            Label(
-                                livingAnimator.isRunning ? "Stop Living Animation" : "Start Living Animation",
-                                systemImage: livingAnimator.isRunning ? "pause.circle.fill" : "play.circle.fill"
-                            )
-                            .font(AuraFont.caption(15))
                         }
 
                         // Compatibility info

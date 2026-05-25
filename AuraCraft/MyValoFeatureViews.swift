@@ -16,6 +16,8 @@ extension Color {
 
 struct IndividualLightControlView: View {
     @EnvironmentObject private var homeKit: HomeKitManager
+    @EnvironmentObject private var storeManager: StoreManager
+    @State private var showingPaywall = false
     @State private var powerStates: [UUID: Bool] = [:]
     @State private var brightnessValues: [UUID: Double] = [:]
     @State private var colorValues: [UUID: Color] = [:]
@@ -23,6 +25,16 @@ struct IndividualLightControlView: View {
     var body: some View {
         NavigationStack {
             List {
+                if !storeManager.isProUnlocked {
+                    Section {
+                        GoPremiumBanner {
+                            showingPaywall = true
+                        }
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets())
+                    }
+                }
+
                 if homeKit.controllableLights.isEmpty {
                     Text(homeKit.statusMessage ?? "No HomeKit lights found")
                         .foregroundColor(AuraColor.textSecondary)
@@ -75,6 +87,10 @@ struct IndividualLightControlView: View {
             }
         }
         .task { homeKit.connectToHomeKit() }
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
+                .environmentObject(storeManager)
+        }
     }
 
     private func binding<Value>(
@@ -107,8 +123,19 @@ struct AIMoodGeneratorView: View {
             ZStack {
                 AuraColor.background.ignoresSafeArea()
                 VStack(alignment: .leading, spacing: AuraSpacing.lg) {
+                    if !storeManager.isProUnlocked {
+                        GoPremiumBanner(
+                            title: "AI Mood is Premium",
+                            subtitle: "Upgrade to generate custom multi-color moods from text."
+                        ) {
+                            showingPaywall = true
+                        }
+                    }
+
                     TextField("Cyberpunk neon lounge", text: $prompt)
                         .textFieldStyle(.roundedBorder)
+                        .disabled(!storeManager.isProUnlocked)
+                        .opacity(storeManager.isProUnlocked ? 1 : 0.55)
 
                     Button {
                         guard storeManager.isProUnlocked else {
@@ -119,18 +146,18 @@ struct AIMoodGeneratorView: View {
                     } label: {
                         HStack {
                             if isGenerating { ProgressView().tint(.white) }
-                            Image(systemName: "sparkles")
-                            Text("Generate Mood")
+                            Image(systemName: storeManager.isProUnlocked ? "sparkles" : "lock.fill")
+                            Text(storeManager.isProUnlocked ? "Generate Mood" : "Go Premium")
                         }
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, AuraSpacing.md)
                         .background(RoundedRectangle(cornerRadius: AuraRadius.sm).fill(AuraColor.textPrimary))
                     }
-                    .disabled(isGenerating || prompt.isEmpty)
+                    .disabled(isGenerating || (storeManager.isProUnlocked && prompt.isEmpty))
 
                     if let generatedMood {
-                        MoodCardView(mood: generatedMood)
+                        MoodCardView(mood: generatedMood, isProUnlocked: storeManager.isProUnlocked)
                         if let room = homeKit.rooms.first {
                             Button("Apply to \(room.name)") {
                                 homeKit.applyMood(generatedMood, to: room)
@@ -182,11 +209,23 @@ struct AIMoodGeneratorView: View {
 
 struct SoundSyncView: View {
     @EnvironmentObject private var homeKit: HomeKitManager
+    @EnvironmentObject private var storeManager: StoreManager
+    @State private var showingPaywall = false
     @StateObject private var soundSync = SoundSyncManager()
 
     var body: some View {
         NavigationStack {
             List {
+                if !storeManager.isProUnlocked {
+                    Section {
+                        GoPremiumBanner {
+                            showingPaywall = true
+                        }
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets())
+                    }
+                }
+
                 Section("Microphone Sync") {
                     Toggle("Sound-Reactive Lights", isOn: Binding(
                         get: { soundSync.isRunning },
@@ -219,6 +258,10 @@ struct SoundSyncView: View {
             .navigationTitle("Sound Sync")
         }
         .onDisappear { soundSync.stop() }
+        .sheet(isPresented: $showingPaywall) {
+            PaywallView()
+                .environmentObject(storeManager)
+        }
     }
 }
 

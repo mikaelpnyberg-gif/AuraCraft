@@ -3,13 +3,14 @@ import SwiftUI
 @MainActor
 enum PremiumMoodLibrary {
     static var moods: [Mood] {
-        specs.map { spec in
+        (specs + livingSpecs).map { spec in
             let settings = spec.colors.map { LightSetting(brightness: spec.brightness, hex: $0) }
             return Mood(
                 name: spec.name,
                 description: spec.description,
                 category: spec.category,
                 isPremium: true,
+                style: spec.style,
                 requiredCapability: .fullRGB,
                 lightSetting: settings.first ?? LightSetting(brightness: spec.brightness),
                 lightSettings: settings,
@@ -24,6 +25,7 @@ enum PremiumMoodLibrary {
         let category: MoodCategory
         let brightness: Double
         let colors: [String]
+        var style: MoodStyle = .still
     }
 
     private static let specs: [Spec] = [
@@ -77,5 +79,14 @@ enum PremiumMoodLibrary {
         Spec(name: "Neon Bazaar", description: "Market-like jewel tones with ruby, teal, gold, and violet accents.", category: .entertainment, brightness: 0.74, colors: ["#D00000", "#00A896", "#FFD166", "#7209B7"]),
         Spec(name: "Spring Window", description: "Fresh blossom pink, daylight white, and new-leaf green for morning optimism.", category: .nature, brightness: 0.76, colors: ["#FFCAD4", "#FDFFFC", "#B7E4C7", "#A2D2FF"]),
         Spec(name: "Quiet Museum", description: "Soft neutral layers that preserve color accuracy while lowering intensity.", category: .productivity, brightness: 0.62, colors: ["#F8F9FA", "#E9ECEF", "#DEE2E6", "#FFF3BF"])
+    ]
+
+    private static let livingSpecs: [Spec] = [
+        Spec(name: "Campfire Drift", description: "A slow ember animation that moves through orange, red, and warm amber lamp by lamp.", category: .livingLights, brightness: 0.54, colors: ["#FF7A1A", "#D7261E", "#FFB000", "#7A1E0E"], style: .living),
+        Spec(name: "Aurora Flow", description: "Northern-light greens, violets, and ice blues that gently rotate across the room.", category: .livingLights, brightness: 0.62, colors: ["#00E087", "#6F35FF", "#7DE8FF", "#17315C"], style: .living),
+        Spec(name: "Ocean Breathing", description: "Teal, deep blue, and seafoam tones that breathe slowly like reflected water.", category: .livingLights, brightness: 0.58, colors: ["#00C2A8", "#006DCC", "#7DFFB2", "#003049"], style: .living),
+        Spec(name: "Neon Pulse", description: "Electric cyan and magenta pulses designed for RGB lamps in lounges and play rooms.", category: .livingLights, brightness: 0.72, colors: ["#00F5FF", "#FF2BD6", "#7B2CFF", "#12122B"], style: .living),
+        Spec(name: "Candle Circle", description: "Soft flame tones that drift subtly for dinner tables and calm evening rooms.", category: .livingLights, brightness: 0.40, colors: ["#FFB347", "#FF7A3D", "#B23A48", "#FFF0C2"], style: .living),
+        Spec(name: "Forest Fireflies", description: "Deep woodland greens with small yellow flashes cycling between lamps.", category: .livingLights, brightness: 0.46, colors: ["#0B3D2E", "#1D6B4F", "#C9F227", "#102418"], style: .living)
     ]
 }

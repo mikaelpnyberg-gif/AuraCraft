@@ -88,6 +88,58 @@ struct PaywallView: View {
     }
 }
 
+struct GoPremiumBanner: View {
+    let title: String
+    let subtitle: String
+    let onUpgrade: () -> Void
+
+    init(
+        title: String = "Go Premium",
+        subtitle: String = "Unlock premium moods, AI Mood, and Living Lights.",
+        onUpgrade: @escaping () -> Void
+    ) {
+        self.title = title
+        self.subtitle = subtitle
+        self.onUpgrade = onUpgrade
+    }
+
+    var body: some View {
+        Button(action: onUpgrade) {
+            HStack(spacing: AuraSpacing.md) {
+                Image(systemName: "crown.fill")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(.white)
+                    .frame(width: 34, height: 34)
+                    .background(Circle().fill(AuraColor.accent))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(AuraFont.title(15))
+                        .foregroundColor(AuraColor.textPrimary)
+                    Text(subtitle)
+                        .font(AuraFont.body(12))
+                        .foregroundColor(AuraColor.textSecondary)
+                        .lineLimit(2)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(AuraColor.textTertiary)
+            }
+            .padding(AuraSpacing.md)
+            .background(RoundedRectangle(cornerRadius: AuraRadius.md).fill(AuraColor.surface))
+            .overlay(
+                RoundedRectangle(cornerRadius: AuraRadius.md)
+                    .strokeBorder(AuraColor.accent.opacity(0.25), lineWidth: 1)
+            )
+            .shadow(color: AuraColor.cardShadow, radius: 10, x: 0, y: 4)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
 private struct PaywallBenefitRow: View {
     let icon: String
     let title: String
