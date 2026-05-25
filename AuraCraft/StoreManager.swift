@@ -4,7 +4,8 @@ import StoreKit
 
 @MainActor
 final class StoreManager: ObservableObject {
-    static let proProductID = "com.auracraft.pro.onetime"
+    static let proProductID = "com.myvalo.pro.monthly"
+    private static let fallbackMonthlyPrice = "$1.99"
 
     @Published private(set) var proProduct: Product?
     @Published private(set) var isProUnlocked = false
@@ -33,7 +34,7 @@ final class StoreManager: ObservableObject {
     }
 
     var proPriceText: String {
-        proProduct?.displayPrice ?? Strings.paywallPriceUnavailable
+        proProduct?.displayPrice ?? Self.fallbackMonthlyPrice
     }
 
     func fetchProducts() async {
@@ -43,6 +44,11 @@ final class StoreManager: ObservableObject {
         do {
             let products = try  await Product.products(for: [Self.proProductID])
             proProduct = products.first
+            if proProduct == nil {
+                storeErrorMessage = "StoreKit product \(Self.proProductID) was not loaded. In Xcode, select MyValoProducts.storekit in the Run scheme options."
+            } else {
+                storeErrorMessage = nil
+            }
         } catch {
             storeErrorMessage = error.localizedDescription
         }
@@ -51,7 +57,10 @@ final class StoreManager: ObservableObject {
     func purchasePro() async {
         guard let product = proProduct else {
             await fetchProducts()
-            guard proProduct != nil else { return }
+            guard proProduct != nil else {
+                storeErrorMessage = "Subscription product is not available in this run. Check the StoreKit Configuration in the scheme."
+                return
+            }
             return await purchasePro()
         }
 

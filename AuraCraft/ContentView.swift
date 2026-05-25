@@ -81,7 +81,7 @@ enum Strings {
         zh: "MyValo 需要访问你的 Apple 家庭，才能点亮你的世界。"
     )
     // Badges
-    static let aiSuggested      = L("AI Suggested", fi: "AI-suositus", es: "Sugerido por IA", ja: "AIの提案", de: "KI-Vorschlag", sv: "AI-förslag", zh: "AI 推荐")
+    static let suggestedMood    = L("Suggested Mood", fi: "Ehdotettu tunnelma", es: "Ambiente sugerido", ja: "おすすめムード", de: "Vorgeschlagene Stimmung", sv: "Föreslagen stämning", zh: "推荐氛围")
     // Capabilities
     static let fullColor        = L("Full Color", fi: "Täysi väri", es: "Color completo", ja: "フルカラー", de: "Vollfarbe", sv: "Full färg", zh: "全彩")
     static let colorTemp        = L("Color Temp", fi: "Värilämpötila", es: "Temperatura", ja: "色温度", de: "Farbtemperatur", sv: "Färgtemperatur", zh: "色温")
@@ -105,21 +105,21 @@ enum Strings {
     }
     // StoreKit / Paywall
     static let paywallTitle            = L("MyValo Pro", fi: "MyValo Pro", es: "MyValo Pro", ja: "MyValo Pro", de: "MyValo Pro", sv: "MyValo Pro", zh: "MyValo Pro")
-    static let paywallSubtitle         = L("Unlock the full lighting studio with one simple purchase.", fi: "Avaa koko valaistusstudio yhdellä ostolla.", es: "Desbloquea todo el estudio de iluminación con una compra única.", ja: "一度の購入で照明スタジオ全体を解除できます。", de: "Schalte das komplette Lichtstudio mit einem einmaligen Kauf frei.", sv: "Lås upp hela ljusstudion med ett enda köp.", zh: "一次购买即可解锁完整灯光工作室。")
+    static let paywallSubtitle         = L("Unlock the full lighting studio for $1.99 per month.", fi: "Avaa koko valaistusstudio hintaan 1,99 $ kuukaudessa.", es: "Desbloquea todo el estudio de iluminación por 1,99 $ al mes.", ja: "月額1.99ドルで照明スタジオ全体を解除できます。", de: "Schalte das komplette Lichtstudio fuer 1,99 $ pro Monat frei.", sv: "Lås upp hela ljusstudion för 1,99 $ per månad.", zh: "每月 1.99 美元即可解锁完整灯光工作室。")
     static let benefitUnlimitedRooms   = L("Unlimited rooms", fi: "Rajattomasti huoneita", es: "Habitaciones ilimitadas", ja: "無制限の部屋", de: "Unbegrenzte Räume", sv: "Obegränsat antal rum", zh: "无限房间")
-    static let benefitAISuggestions    = L("AI lighting suggestions", fi: "AI-valaistusehdotukset", es: "Sugerencias de iluminación con IA", ja: "AI照明提案", de: "KI-Lichtvorschläge", sv: "AI-ljusförslag", zh: "AI 灯光建议")
+    static let benefitLightingSuggestions = L("Premium lighting suggestions", fi: "Premium-valaistusehdotukset", es: "Sugerencias de iluminación premium", ja: "プレミアム照明提案", de: "Premium-Lichtvorschläge", sv: "Premium-ljusförslag", zh: "高级灯光建议")
     static let benefitHomeKitSync      = L("HomeKit mood sync", fi: "HomeKit-tunnelmien synkronointi", es: "Sincronización de ambientes con HomeKit", ja: "HomeKitムード同期", de: "HomeKit-Stimmungssync", sv: "HomeKit-synk av stämningar", zh: "HomeKit 氛围同步")
     static let restorePurchases        = L("Restore Purchases", fi: "Palauta ostot", es: "Restaurar compras", ja: "購入を復元", de: "Käufe wiederherstellen", sv: "Återställ köp", zh: "恢复购买")
     static let paywallPriceUnavailable = L("Price unavailable", fi: "Hinta ei saatavilla", es: "Precio no disponible", ja: "価格を取得できません", de: "Preis nicht verfügbar", sv: "Pris ej tillgängligt", zh: "价格不可用")
     static let purchasePending         = L("Purchase is pending approval.", fi: "Osto odottaa hyväksyntää.", es: "La compra está pendiente de aprobación.", ja: "購入は承認待ちです。", de: "Der Kauf wartet auf Genehmigung.", sv: "Köpet väntar på godkännande.", zh: "购买正在等待批准。")
     static let purchaseVerificationFailed = L("We could not verify this purchase.", fi: "Ostoa ei voitu vahvistaa.", es: "No pudimos verificar esta compra.", ja: "この購入を確認できませんでした。", de: "Wir konnten diesen Kauf nicht verifizieren.", sv: "Vi kunde inte verifiera köpet.", zh: "无法验证此购买。")
-    static let lockedAISuggestion      = L("Pro suggestion", fi: "Pro-ehdotus", es: "Sugerencia Pro", ja: "Pro提案", de: "Pro-Vorschlag", sv: "Pro-förslag", zh: "Pro 建议")
-    static let lockedAISuggestionDesc  = L("Unlock MyValo Pro to reveal this AI mood.", fi: "Avaa MyValo Pro nähdäksesi tämän AI-tunnelman.", es: "Desbloquea MyValo Pro para revelar este ambiente con IA.", ja: "MyValo Proを解除してこのAIムードを表示します。", de: "Schalte MyValo Pro frei, um diese KI-Stimmung zu sehen.", sv: "Lås upp MyValo Pro för att visa denna AI-stämning.", zh: "解锁 MyValo Pro 以显示此 AI 氛围。")
+    static let lockedProSuggestion     = L("Pro suggestion", fi: "Pro-ehdotus", es: "Sugerencia Pro", ja: "Pro提案", de: "Pro-Vorschlag", sv: "Pro-förslag", zh: "Pro 建议")
+    static let lockedProSuggestionDesc = L("Unlock MyValo Pro to reveal this lighting mood.", fi: "Avaa MyValo Pro nähdäksesi tämän valaistustunnelman.", es: "Desbloquea MyValo Pro para revelar este ambiente de luz.", ja: "MyValo Proを解除してこの照明ムードを表示します。", de: "Schalte MyValo Pro frei, um diese Lichtstimmung zu sehen.", sv: "Lås upp MyValo Pro för att visa denna ljusstämning.", zh: "解锁 MyValo Pro 以显示此灯光氛围。")
     static let lockedRoomsSubtitle     = L("Upgrade for unlimited rooms", fi: "Päivitä rajattomiin huoneisiin", es: "Actualiza para habitaciones ilimitadas", ja: "アップグレードで部屋数無制限", de: "Upgrade für unbegrenzte Räume", sv: "Uppgradera för obegränsade rum", zh: "升级以解锁无限房间")
     static let hardwareUpgradeTitle    = L("Want full color?", fi: "Haluatko täyden värivalon?", es: "¿Quieres color completo?", ja: "フルカラーにしますか？", de: "Volle Farbe gewünscht?", sv: "Vill du ha full färg?", zh: "想要全彩灯光？")
     static let hardwareUpgradeSubtitle = L("Upgrade your lights", fi: "Päivitä valaisimesi", es: "Mejora tus luces", ja: "ライトをアップグレード", de: "Rüste deine Lichter auf", sv: "Uppgradera dina lampor", zh: "升级你的灯具")
     static func paywallPurchaseButton(_ price: String) -> String {
-        L("Unlock Pro - \(price)", fi: "Avaa Pro - \(price)", es: "Desbloquear Pro - \(price)", ja: "Proを解除 - \(price)", de: "Pro freischalten - \(price)", sv: "Lås upp Pro - \(price)", zh: "解锁 Pro - \(price)")
+        L("Subscribe - \(price)/month", fi: "Tilaa - \(price)/kk", es: "Suscribirse - \(price)/mes", ja: "登録 - \(price)/月", de: "Abonnieren - \(price)/Monat", sv: "Prenumerera - \(price)/månad", zh: "订阅 - \(price)/月")
     }
     static func lockedRoomsTitle(_ count: Int) -> String {
         L("\(count) more rooms locked", fi: "\(count) huonetta lukittu", es: "\(count) habitaciones más bloqueadas", ja: "さらに\(count)部屋がロック中", de: "\(count) weitere Räume gesperrt", sv: "\(count) rum till är låsta", zh: "还有 \(count) 个房间已锁定")
@@ -897,8 +897,8 @@ enum MoodEngine {
     private static func lockedSuggestionPlaceholders(for room: Room) -> [Mood] {
         MoodCategory.allCases.prefix(3).map { category in
             Mood(
-                name: Strings.lockedAISuggestion,
-                description: Strings.lockedAISuggestionDesc,
+                name: Strings.lockedProSuggestion,
+                description: Strings.lockedProSuggestionDesc,
                 category: category,
                 isGenerated: true,
                 isLocked: true,
@@ -1230,9 +1230,6 @@ struct MainTabView: View {
 
             IndividualLightControlView()
                 .tabItem { Label("Lights", systemImage: "lightbulb.2.fill") }
-
-            AIMoodGeneratorView()
-                .tabItem { Label("AI Mood", systemImage: "sparkles") }
 
             SoundSyncView()
                 .tabItem { Label("Sound", systemImage: "waveform") }
@@ -1683,7 +1680,7 @@ struct RoomDetailView: View {
                             .padding(.horizontal, AuraSpacing.lg)
                     }
 
-                    // AI-generated suggestions
+                    // Generated suggestions
                     SuggestionsSection(suggestions: suggestions, isProUnlocked: storeManager.isProUnlocked) { mood in
                         selectOrUpsell(mood)
                     }
@@ -1897,7 +1894,7 @@ struct MoodCardView: View {
                 }
 
                 if mood.isGenerated {
-                    Text(isLockedForUser ? Strings.paywallTitle : Strings.aiSuggested)
+                    Text(isLockedForUser ? Strings.paywallTitle : Strings.suggestedMood)
                         .font(AuraFont.caption(10))
                         .foregroundColor(.white)
                         .padding(.horizontal, 8).padding(.vertical, 4)
@@ -2092,7 +2089,7 @@ struct MoodDetailSheet: View {
 
                     VStack(alignment: .leading, spacing: AuraSpacing.sm) {
                         if mood.isGenerated {
-                            Text(Strings.aiSuggested)
+                            Text(Strings.suggestedMood)
                                 .font(AuraFont.caption(11))
                                 .foregroundColor(.white.opacity(0.85))
                                 .padding(.horizontal, 10).padding(.vertical, 5)

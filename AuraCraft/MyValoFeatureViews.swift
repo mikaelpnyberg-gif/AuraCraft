@@ -109,147 +109,18 @@ struct IndividualLightControlView: View {
     }
 }
 
-struct AIMoodGeneratorView: View {
-    @EnvironmentObject private var homeKit: HomeKitManager
-    @EnvironmentObject private var storeManager: StoreManager
-    @State private var prompt = ""
-    @State private var generatedMood: Mood?
-    @State private var generatedMoodStyle: MoodStyle = .still
-    @State private var movementSpeed: Double = 4
-    @State private var isGenerating = false
-    @State private var errorMessage: String?
-    @State private var showingPaywall = false
-
-    var body: some View {
-        NavigationStack {
-            ZStack {
-                AuraColor.background.ignoresSafeArea()
-                VStack(alignment: .leading, spacing: AuraSpacing.lg) {
-                    if !storeManager.isProUnlocked {
-                        GoPremiumBanner(
-                            title: "AI Mood is Premium",
-                            subtitle: "Upgrade to generate custom multi-color moods from text."
-                        ) {
-                            showingPaywall = true
-                        }
-                    }
-
-                    TextField("Cyberpunk neon lounge", text: $prompt)
-                        .textFieldStyle(.roundedBorder)
-                        .disabled(!storeManager.isProUnlocked)
-                        .opacity(storeManager.isProUnlocked ? 1 : 0.55)
-
-                    VStack(alignment: .leading, spacing: AuraSpacing.sm) {
-                        Text("Mood Motion")
-                            .font(AuraFont.caption(12))
-                            .foregroundColor(AuraColor.textTertiary)
-                            .kerning(1.5)
-                            .textCase(.uppercase)
-
-                        Picker("Mood Motion", selection: $generatedMoodStyle) {
-                            Text("Still").tag(MoodStyle.still)
-                            Text("Living").tag(MoodStyle.living)
-                        }
-                        .pickerStyle(.segmented)
-                        .disabled(!storeManager.isProUnlocked)
-
-                        if generatedMoodStyle == .living {
-                            VStack(alignment: .leading, spacing: AuraSpacing.xs) {
-                                HStack {
-                                    Text("Movement Speed")
-                                        .font(AuraFont.body(13))
-                                        .foregroundColor(AuraColor.textSecondary)
-                                    Spacer()
-                                    Text("Every \(Int(movementSpeed))s")
-                                        .font(AuraFont.caption(12))
-                                        .foregroundColor(AuraColor.textPrimary)
-                                }
-                                Slider(value: $movementSpeed, in: 3...8, step: 1)
-                                    .disabled(!storeManager.isProUnlocked)
-                            }
-                        }
-                    }
-                    .opacity(storeManager.isProUnlocked ? 1 : 0.55)
-
-                    Button {
-                        guard storeManager.isProUnlocked else {
-                            showingPaywall = true
-                            return
-                        }
-                        Task { await generateMood() }
-                    } label: {
-                        HStack {
-                            if isGenerating { ProgressView().tint(.white) }
-                            Image(systemName: storeManager.isProUnlocked ? "sparkles" : "lock.fill")
-                            Text(storeManager.isProUnlocked ? "Generate Mood" : "Go Premium")
-                        }
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, AuraSpacing.md)
-                        .background(RoundedRectangle(cornerRadius: AuraRadius.sm).fill(AuraColor.textPrimary))
-                    }
-                    .disabled(isGenerating || (storeManager.isProUnlocked && prompt.isEmpty))
-
-                    if let generatedMood {
-                        MoodCardView(mood: generatedMood, isProUnlocked: storeManager.isProUnlocked)
-                        if let room = homeKit.rooms.first {
-                            Button("Apply to \(room.name)") {
-                                homeKit.applyMood(generatedMood, to: room)
-                            }
-                            .font(AuraFont.caption(15))
-                        }
-                    }
-
-                    if let errorMessage {
-                        Text(errorMessage)
-                            .foregroundColor(.red)
-                    }
-
-                    Spacer()
-                }
-                .padding(AuraSpacing.lg)
-            }
-            .navigationTitle("AI Mood")
-        }
-        .sheet(isPresented: $showingPaywall) {
-            PaywallView().environmentObject(storeManager)
-        }
-    }
-
-    private func generateMood() async {
-        isGenerating = true
-        errorMessage = nil
-        defer { isGenerating = false }
-
-        do {
-            let response = try await MockMoodAPI.generateMood(prompt: prompt)
-            let settings = response.colors.map { LightSetting(brightness: response.brightness, hex: $0) }
-            generatedMood = Mood(
-                name: response.name,
-                description: generatedMoodStyle == .living
-                    ? "\(response.description) Living movement updates every \(Int(movementSpeed)) seconds."
-                    : response.description,
-                category: generatedMoodStyle == .living ? .livingLights : .entertainment,
-                isGenerated: true,
-                isPremium: true,
-                style: generatedMoodStyle,
-                requiredCapability: .fullRGB,
-                lightSetting: settings.first ?? LightSetting(brightness: response.brightness),
-                lightSettings: settings,
-                gradientColors: response.colors.map(ColorHex.color(from:)),
-                animationInterval: movementSpeed
-            )
-        } catch {
-            errorMessage = error.localizedDescription
-        }
-    }
-}
-
 struct SoundSyncView: View {
     @EnvironmentObject private var homeKit: HomeKitManager
     @EnvironmentObject private var storeManager: StoreManager
     @State private var showingPaywall = false
     @StateObject private var soundSync = SoundSyncManager()
+
+    private var activeMoodRows: [(roomName: String, mood: Mood)] {
+        homeKit.rooms.compactMap { room in
+            guard let mood = homeKit.currentMood(for: room) else { return nil }
+            return (room.name, mood)
+        }
+    }
 
     var body: some View {
         NavigationStack {
@@ -264,10 +135,37 @@ struct SoundSyncView: View {
                     }
                 }
 
+                Section("Active Mood") {
+                    if activeMoodRows.isEmpty {
+                        Text("No mood is active yet")
+                            .foregroundColor(AuraColor.textSecondary)
+                    } else {
+                        ForEach(activeMoodRows, id: \.roomName) { row in
+                            HStack(spacing: AuraSpacing.md) {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(LinearGradient(colors: row.mood.gradientColors, startPoint: .topLeading, endPoint: .bottomTrailing))
+                                    .frame(width: 38, height: 38)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(row.mood.name)
+                                        .font(AuraFont.title(14))
+                                    Text(row.roomName)
+                                        .font(AuraFont.body(12))
+                                        .foregroundColor(AuraColor.textSecondary)
+                                }
+                            }
+                        }
+                    }
+                }
+
                 Section("Microphone Sync") {
                     Toggle("Sound-Reactive Lights", isOn: Binding(
                         get: { soundSync.isRunning },
                         set: { enabled in
+                            guard storeManager.isProUnlocked else {
+                                showingPaywall = true
+                                soundSync.stop()
+                                return
+                            }
                             if enabled {
                                 Task { await soundSync.start(homeKit: homeKit) }
                             } else {
@@ -285,6 +183,8 @@ struct SoundSyncView: View {
                         ProgressView(value: soundSync.trebleLevel)
                     }
                     .font(AuraFont.body(13))
+                    .disabled(!storeManager.isProUnlocked)
+                    .opacity(storeManager.isProUnlocked ? 1 : 0.45)
                 }
 
                 if let error = soundSync.errorMessage {
@@ -300,27 +200,5 @@ struct SoundSyncView: View {
             PaywallView()
                 .environmentObject(storeManager)
         }
-    }
-}
-
-struct AIMoodResponse: Decodable {
-    let name: String
-    let description: String
-    let colors: [String]
-    let brightness: Double
-}
-
-enum MockMoodAPI {
-    static func generateMood(prompt: String) async throws -> AIMoodResponse {
-        try await Task.sleep(nanoseconds: 450_000_000)
-        let json = """
-        {
-          "name": "\(prompt.capitalized)",
-          "description": "An AI-generated multi-color lighting scene for \(prompt).",
-          "colors": ["#00F5FF", "#FF2BD6", "#7C3CFF", "#FFB000"],
-          "brightness": 0.72
-        }
-        """.data(using: .utf8)!
-        return try JSONDecoder().decode(AIMoodResponse.self, from: json)
     }
 }

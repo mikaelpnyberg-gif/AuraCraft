@@ -35,7 +35,7 @@ struct PaywallView: View {
 
                     VStack(spacing: AuraSpacing.sm) {
                         PaywallBenefitRow(icon: "square.grid.2x2.fill", title: Strings.benefitUnlimitedRooms)
-                        PaywallBenefitRow(icon: "wand.and.stars", title: Strings.benefitAISuggestions)
+                        PaywallBenefitRow(icon: "wand.and.stars", title: Strings.benefitLightingSuggestions)
                         PaywallBenefitRow(icon: "house.fill", title: Strings.benefitHomeKitSync)
                     }
                     .auraCard(padding: AuraSpacing.md)
@@ -95,7 +95,7 @@ struct GoPremiumBanner: View {
 
     init(
         title: String = "Go Premium",
-        subtitle: String = "Unlock premium moods, AI Mood, and Living Lights.",
+        subtitle: String = "Unlock premium moods, Living Lights, and Sound Sync.",
         onUpgrade: @escaping () -> Void
     ) {
         self.title = title
