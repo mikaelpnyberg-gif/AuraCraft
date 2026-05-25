@@ -35,6 +35,12 @@ struct IndividualLightControlView: View {
                     }
                 }
 
+                Section {
+                    SmartLightsAffiliateBanner()
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets())
+                }
+
                 if homeKit.controllableLights.isEmpty {
                     Text(homeKit.statusMessage ?? "No HomeKit lights found")
                         .foregroundColor(AuraColor.textSecondary)

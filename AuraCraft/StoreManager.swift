@@ -42,11 +42,9 @@ final class StoreManager: ObservableObject {
         defer { isLoadingProducts = false }
 
         do {
-            let products = try  await Product.products(for: [Self.proProductID])
+            let products = try await Product.products(for: [Self.proProductID])
             proProduct = products.first
-            if proProduct == nil {
-                storeErrorMessage = "StoreKit product \(Self.proProductID) was not loaded. In Xcode, select MyValoProducts.storekit in the Run scheme options."
-            } else {
+            if proProduct != nil {
                 storeErrorMessage = nil
             }
         } catch {
@@ -58,7 +56,7 @@ final class StoreManager: ObservableObject {
         guard let product = proProduct else {
             await fetchProducts()
             guard proProduct != nil else {
-                storeErrorMessage = "Subscription product is not available in this run. Check the StoreKit Configuration in the scheme."
+                storeErrorMessage = "Subscription is not available in this test run. Check the StoreKit configuration or App Store Connect product setup."
                 return
             }
             return await purchasePro()

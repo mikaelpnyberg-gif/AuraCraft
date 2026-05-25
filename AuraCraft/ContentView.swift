@@ -1693,6 +1693,12 @@ struct RoomDetailView: View {
                     MoodBrowseModePicker(selection: $browseMode)
                         .padding(.horizontal, AuraSpacing.lg)
 
+                    SmartLightsAffiliateBanner(
+                        title: "Add more smart lights",
+                        subtitle: "Shop bulbs that can show richer room moods."
+                    )
+                    .padding(.horizontal, AuraSpacing.lg)
+
                     if browseMode == .still {
                         PresetLibrarySection(
                             title: "Still Lights",

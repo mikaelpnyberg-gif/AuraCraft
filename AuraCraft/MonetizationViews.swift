@@ -140,6 +140,69 @@ struct GoPremiumBanner: View {
     }
 }
 
+enum AffiliateLinkConfig {
+    /// Add your Amazon affiliate URL here to enable the smart-light purchase banners.
+    static let smartLightsURL: URL? = nil
+}
+
+struct SmartLightsAffiliateBanner: View {
+    @Environment(\.openURL) private var openURL
+
+    let title: String
+    let subtitle: String
+
+    init(
+        title: String = "Need compatible smart lights?",
+        subtitle: String = "Shop smart bulbs that work with lighting moods."
+    ) {
+        self.title = title
+        self.subtitle = subtitle
+    }
+
+    var body: some View {
+        if let url = AffiliateLinkConfig.smartLightsURL {
+            Button {
+                openURL(url)
+            } label: {
+                HStack(spacing: AuraSpacing.md) {
+                    ZStack {
+                        Circle()
+                            .fill(AuraColor.accentLight)
+                        Image(systemName: "cart.fill")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(AuraColor.accent)
+                    }
+                    .frame(width: 36, height: 36)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(title)
+                            .font(AuraFont.title(15))
+                            .foregroundColor(AuraColor.textPrimary)
+                        Text(subtitle)
+                            .font(AuraFont.body(12))
+                            .foregroundColor(AuraColor.textSecondary)
+                            .lineLimit(2)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "arrow.up.right")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(AuraColor.textTertiary)
+                }
+                .padding(AuraSpacing.md)
+                .background(RoundedRectangle(cornerRadius: AuraRadius.md).fill(AuraColor.surface))
+                .overlay(
+                    RoundedRectangle(cornerRadius: AuraRadius.md)
+                        .strokeBorder(AuraColor.divider, lineWidth: 1)
+                )
+                .shadow(color: AuraColor.cardShadow, radius: 10, x: 0, y: 4)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+}
+
 private struct PaywallBenefitRow: View {
     let icon: String
     let title: String
