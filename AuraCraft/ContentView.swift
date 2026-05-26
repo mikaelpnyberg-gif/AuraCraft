@@ -484,6 +484,7 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
     private let favoriteMoodNamesKey = "favoriteMoodNames"
     private var hmManager: HMHomeManager?
     private var lightBindings: [UUID: HomeKitLightBinding] = [:]
+    private var livingAnimationTasks: [UUID: Task<Void, Never>] = [:]
 
     struct ControllableLight: Identifiable {
         let id: UUID
@@ -494,6 +495,7 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
 
     private struct HomeKitLightBinding {
         let homeID: UUID
+        let roomID: UUID
         let accessoryID: UUID
         let serviceID: UUID
         let roomName: String
@@ -619,6 +621,7 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
                             let lightCapability = capability(for: service)
                             bindings[lightID] = HomeKitLightBinding(
                                 homeID: home.uniqueIdentifier,
+                                roomID: homeRoom.uniqueIdentifier,
                                 accessoryID: accessory.uniqueIdentifier,
                                 serviceID: service.uniqueIdentifier,
                                 roomName: homeRoom.name,
@@ -734,11 +737,54 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
     // MARK: Scene Application
 
     func applyMood(_ mood: Mood, to room: Room) {
+        if mood.style == .living {
+            startLivingAnimation(mood, to: room)
+        } else {
+            stopLivingAnimation(for: room.id)
+            applyMoodFrame(mood, to: room)
+        }
+    }
+
+    func turnOffLights(in room: Room) {
+        stopLivingAnimation(for: room.id)
+        appliedMoods[room.id] = nil
+
+        for light in room.lights {
+            setPower(false, for: light.id)
+        }
+    }
+
+    private func startLivingAnimation(_ mood: Mood, to room: Room) {
+        stopLivingAnimation(for: room.id)
+        applyMoodFrame(mood, to: room)
+
+        let interval = UInt64(mood.animationInterval * 1_000_000_000)
+        livingAnimationTasks[room.id] = Task { [weak self] in
+            var offset = 1
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: interval)
+                await MainActor.run {
+                    guard let self else { return }
+                    let shifted = self.shiftedMood(mood, offset: offset)
+                    self.applyMoodFrame(shifted, to: room)
+                    offset += 1
+                }
+            }
+        }
+    }
+
+    private func stopLivingAnimation(for roomID: UUID) {
+        livingAnimationTasks[roomID]?.cancel()
+        livingAnimationTasks[roomID] = nil
+    }
+
+    private func applyMoodFrame(_ mood: Mood, to room: Room) {
         appliedMoods[room.id] = mood
 
         for (index, light) in room.lights.enumerated() {
             guard
                 let binding = lightBindings[light.id],
+                binding.roomID == room.id,
                 let home = hmManager?.homes.first(where: { $0.uniqueIdentifier == binding.homeID }),
                 let accessory = home.accessories.first(where: { $0.uniqueIdentifier == binding.accessoryID }),
                 let service = accessory.services.first(where: { $0.uniqueIdentifier == binding.serviceID })
@@ -749,12 +795,22 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
         }
     }
 
-    func turnOffLights(in room: Room) {
-        appliedMoods[room.id] = nil
-
-        for light in room.lights {
-            setPower(false, for: light.id)
-        }
+    private func shiftedMood(_ mood: Mood, offset: Int) -> Mood {
+        let settings = mood.lightSettings.indices.map { mood.lightSettings[($0 + offset) % mood.lightSettings.count] }
+        return Mood(
+            name: mood.name,
+            description: mood.description,
+            category: mood.category,
+            isGenerated: mood.isGenerated,
+            isLocked: mood.isLocked,
+            isPremium: mood.isPremium,
+            style: mood.style,
+            requiredCapability: mood.requiredCapability,
+            lightSetting: settings.first ?? mood.lightSetting,
+            lightSettings: settings,
+            gradientColors: settings.map(\.previewColor),
+            animationInterval: mood.animationInterval
+        )
     }
 
     func currentMood(for room: Room) -> Mood? { appliedMoods[room.id] }
@@ -1731,8 +1787,8 @@ struct RoomDetailView: View {
             }
         }
         .sheet(item: $selectedMood) { mood in
-            MoodDetailSheet(mood: mood, room: room) {
-                homeKit.applyMood(mood, to: room)
+            MoodDetailSheet(mood: mood, room: room) { adjustedMood in
+                homeKit.applyMood(adjustedMood, to: room)
                 selectedMood = nil
             }
         }
@@ -2056,16 +2112,53 @@ struct MoodDetailSheet: View {
 
     let mood: Mood
     let room: Room
-    let onApply: () -> Void
+    let onApply: (Mood) -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var livingAnimator = LivingLightAnimator()
     @State private var applied = false
+    @State private var brightnessLevel: Double
+
+    init(mood: Mood, room: Room, onApply: @escaping (Mood) -> Void) {
+        self.mood = mood
+        self.room = room
+        self.onApply = onApply
+        _brightnessLevel = State(initialValue: mood.lightSetting.brightness)
+    }
 
     private var compatibleLightCount: Int {
         room.lights.filter {
             $0.capability.capabilityLevel >= mood.requiredCapability.capabilityLevel
         }.count
+    }
+
+    private var adjustedMood: Mood {
+        let adjustedSettings = mood.lightSettings.map { setting in
+            LightSetting(
+                brightness: brightnessLevel,
+                colorTemperatureKelvin: setting.colorTemperatureKelvin,
+                hue: setting.hue,
+                saturation: setting.saturation
+            )
+        }
+
+        let settings = adjustedSettings.isEmpty
+            ? [LightSetting(brightness: brightnessLevel)]
+            : adjustedSettings
+
+        return Mood(
+            name: mood.name,
+            description: mood.description,
+            category: mood.category,
+            isGenerated: mood.isGenerated,
+            isLocked: mood.isLocked,
+            isPremium: mood.isPremium,
+            style: mood.style,
+            requiredCapability: mood.requiredCapability,
+            lightSetting: settings[0],
+            lightSettings: settings,
+            gradientColors: settings.map(\.previewColor),
+            animationInterval: mood.animationInterval
+        )
     }
 
     var body: some View {
@@ -2133,7 +2226,7 @@ struct MoodDetailSheet: View {
 
                             HStack(spacing: AuraSpacing.md) {
                                 SettingChip(icon: "light.max",      label: "Brightness",
-                                            value: "\(Int(mood.lightSetting.brightness * 100))%")
+                                            value: "\(Int(brightnessLevel * 100))%")
                                 if let ct = mood.lightSetting.colorTemperatureKelvin {
                                     SettingChip(icon: "thermometer.sun", label: "Temperature", value: "\(ct) K")
                                 }
@@ -2146,20 +2239,33 @@ struct MoodDetailSheet: View {
                             }
                         }
 
-                        if mood.style == .living {
-                            Button {
-                                if livingAnimator.isRunning {
-                                    livingAnimator.stop()
-                                } else {
-                                    livingAnimator.start(mood: mood, room: room, homeKit: homeKit)
-                                }
-                            } label: {
-                                Label(
-                                    livingAnimator.isRunning ? "Stop Living Animation" : "Start Living Animation",
-                                    systemImage: livingAnimator.isRunning ? "pause.circle.fill" : "play.circle.fill"
-                                )
-                                .font(AuraFont.caption(15))
+                        VStack(alignment: .leading, spacing: AuraSpacing.sm) {
+                            HStack {
+                                Text("Mood Brightness")
+                                    .font(AuraFont.caption(11))
+                                    .foregroundColor(AuraColor.textTertiary)
+                                    .kerning(1.5)
+                                Spacer()
+                                Text("\(Int(brightnessLevel * 100))%")
+                                    .font(AuraFont.title(14))
+                                    .foregroundColor(AuraColor.textPrimary)
                             }
+
+                            Slider(value: $brightnessLevel, in: 0.1...1.0, step: 0.05)
+                                .tint(AuraColor.accent)
+                        }
+                        .auraCard(padding: AuraSpacing.md)
+
+                        if mood.style == .living {
+                            HStack(spacing: AuraSpacing.sm) {
+                                Image(systemName: "waveform.path.ecg")
+                                    .foregroundColor(AuraColor.accent)
+                                Text("Applying this moving mood starts a gentle HomeKit animation that updates every \(Int(mood.animationInterval)) seconds.")
+                                    .font(AuraFont.body(13))
+                                    .foregroundColor(AuraColor.textSecondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                            .auraCard(padding: AuraSpacing.md)
                         }
 
                         // Compatibility info
@@ -2180,7 +2286,7 @@ struct MoodDetailSheet: View {
                 VStack {
                     Button {
                         withAnimation(.spring(response: 0.3)) { applied = true }
-                        onApply()
+                        onApply(adjustedMood)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.85) { dismiss() }
                     } label: {
                         HStack(spacing: AuraSpacing.sm) {
@@ -2196,7 +2302,7 @@ struct MoodDetailSheet: View {
                                 .fill(
                                     applied
                                         ? AnyShapeStyle(Color.green)
-                                        : AnyShapeStyle(LinearGradient(colors: mood.gradientColors, startPoint: .leading, endPoint: .trailing))
+                                        : AnyShapeStyle(LinearGradient(colors: adjustedMood.gradientColors, startPoint: .leading, endPoint: .trailing))
                                 )
                         )
                     }

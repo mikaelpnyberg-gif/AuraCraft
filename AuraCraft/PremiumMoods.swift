@@ -78,7 +78,27 @@ enum PremiumMoodLibrary {
         Spec(name: "Lavender Sleep", description: "Dim lavender, smoky blue, and warm white to prepare for rest.", category: .relaxation, brightness: 0.28, colors: ["#BDB2FF", "#6D6875", "#FFCDB2", "#2B2D42"]),
         Spec(name: "Neon Bazaar", description: "Market-like jewel tones with ruby, teal, gold, and violet accents.", category: .entertainment, brightness: 0.74, colors: ["#D00000", "#00A896", "#FFD166", "#7209B7"]),
         Spec(name: "Spring Window", description: "Fresh blossom pink, daylight white, and new-leaf green for morning optimism.", category: .nature, brightness: 0.76, colors: ["#FFCAD4", "#FDFFFC", "#B7E4C7", "#A2D2FF"]),
-        Spec(name: "Quiet Museum", description: "Soft neutral layers that preserve color accuracy while lowering intensity.", category: .productivity, brightness: 0.62, colors: ["#F8F9FA", "#E9ECEF", "#DEE2E6", "#FFF3BF"])
+        Spec(name: "Quiet Museum", description: "Soft neutral layers that preserve color accuracy while lowering intensity.", category: .productivity, brightness: 0.62, colors: ["#F8F9FA", "#E9ECEF", "#DEE2E6", "#FFF3BF"]),
+        Spec(name: "Studio Daylight Grid", description: "Layered clean whites and soft sky blue for detailed desk work across several lamps.", category: .productivity, brightness: 0.90, colors: ["#FFFFFF", "#EEF7FF", "#CDEBFF", "#F7F3E8"]),
+        Spec(name: "Blueprint Focus", description: "Technical blue, crisp white, and pale cyan for planning, coding, and review sessions.", category: .productivity, brightness: 0.86, colors: ["#F8FBFF", "#7DB7FF", "#BFE9FF", "#2454A6"]),
+        Spec(name: "Editorial White", description: "Balanced neutral whites with subtle warm and cool side tones for reading and edits.", category: .productivity, brightness: 0.82, colors: ["#FFFFFF", "#F4F0E8", "#E8F1F8", "#FFF4CF"]),
+        Spec(name: "Clear Desk Energy", description: "Bright daylight, mint, and pale amber accents to keep the room alert but comfortable.", category: .productivity, brightness: 0.88, colors: ["#FFFFFF", "#D8F3DC", "#BDE0FE", "#FFE8A3"]),
+        Spec(name: "Late Sprint", description: "Cool concentration light with orange edge accents for focused evening productivity.", category: .productivity, brightness: 0.76, colors: ["#DDEBFF", "#8ECAE6", "#FFFFFF", "#FFB703"]),
+        Spec(name: "Amber Rain", description: "Soft amber, slate blue, and muted mauve for relaxed rainy evenings.", category: .relaxation, brightness: 0.44, colors: ["#D99A4E", "#5C6B73", "#B5838D", "#F6E1C3"]),
+        Spec(name: "Rose Tea", description: "Blush pink, honey cream, and low rose tones for a gentle winding-down mood.", category: .relaxation, brightness: 0.42, colors: ["#FFCAD4", "#F7E1AE", "#D8A7B1", "#FFF1CF"]),
+        Spec(name: "Soft Harbor", description: "Low teal, warm dock light, and foggy blue for calm coastal nights.", category: .relaxation, brightness: 0.40, colors: ["#3A6B73", "#A8DADC", "#F4D35E", "#264653"]),
+        Spec(name: "Evening Linen", description: "Cream, linen beige, lavender gray, and soft peach for understated comfort.", category: .relaxation, brightness: 0.46, colors: ["#FFF8E7", "#E6D5B8", "#C8B6D9", "#FFD6BA"]),
+        Spec(name: "Quiet Ember", description: "Dim coal red, copper, and candle cream for a slow late-night atmosphere.", category: .relaxation, brightness: 0.34, colors: ["#3C1518", "#A44200", "#D58936", "#F6E1C3"]),
+        Spec(name: "Arcade Prism", description: "Bright cyan, lime, violet, and coral mapped across lamps for gaming rooms.", category: .entertainment, brightness: 0.84, colors: ["#00F5FF", "#9EFF00", "#B517FF", "#FF5A5F"]),
+        Spec(name: "Pop Concert", description: "Stage pink, electric blue, spotlight white, and gold for music nights.", category: .entertainment, brightness: 0.86, colors: ["#FF2BD6", "#007AFF", "#FFFFFF", "#FFD60A"]),
+        Spec(name: "Streaming Studio", description: "Camera-friendly teal and magenta with a soft white key-light balance.", category: .entertainment, brightness: 0.74, colors: ["#2EC4B6", "#E71D73", "#F8F9FA", "#3A0CA3"]),
+        Spec(name: "Vapor Room", description: "Lavender haze, cyan glass, and sunset orange for retro lounge ambience.", category: .entertainment, brightness: 0.66, colors: ["#C77DFF", "#80FFDB", "#FF9E00", "#240046"]),
+        Spec(name: "Afterparty Glow", description: "Low ruby, violet, amber, and deep blue for a softer post-party scene.", category: .entertainment, brightness: 0.50, colors: ["#9D0208", "#7209B7", "#FFBA08", "#03045E"]),
+        Spec(name: "Moss Creek", description: "Moss green, stream blue, stone gray, and pale leaf light for natural calm.", category: .nature, brightness: 0.56, colors: ["#588157", "#457B9D", "#A3B18A", "#DAD7CD"]),
+        Spec(name: "Wildflower Field", description: "Fresh green, blossom pink, cornflower blue, and soft sunlight across the room.", category: .nature, brightness: 0.74, colors: ["#80B918", "#FFAFCC", "#A2D2FF", "#FFF3B0"]),
+        Spec(name: "Glacier Morning", description: "Ice blue, clean white, pale aqua, and granite gray for bright natural clarity.", category: .nature, brightness: 0.78, colors: ["#CAF0F8", "#FFFFFF", "#90E0EF", "#ADB5BD"]),
+        Spec(name: "Autumn Path", description: "Maple red, golden leaf, bark brown, and soft sky blue for fall evenings.", category: .nature, brightness: 0.58, colors: ["#BC3908", "#F6AA1C", "#6F4518", "#A2D2FF"]),
+        Spec(name: "Moonlit Shore", description: "Moon blue, silver white, seafoam, and deep navy for quiet night rooms.", category: .nature, brightness: 0.42, colors: ["#BDE0FE", "#F8F9FA", "#A8DADC", "#1D3557"])
     ]
 
     private static let livingSpecs: [Spec] = [
@@ -92,6 +112,11 @@ enum PremiumMoodLibrary {
         Spec(name: "Lava Lamp", description: "Molten pink, purple, and orange tones that roll slowly between lamps like liquid color.", category: .livingLights, brightness: 0.56, colors: ["#FF5DA2", "#7B2CFF", "#FF6D00", "#2D00F7"], style: .living),
         Spec(name: "Northern Tide", description: "Blue-green waves and pale icy highlights that move with a calm coastal rhythm.", category: .livingLights, brightness: 0.60, colors: ["#2A9D8F", "#90E0EF", "#CAF0F8", "#264653"], style: .living),
         Spec(name: "Sunrise Bloom", description: "A gradual morning motion from rose and peach into soft daylight warmth.", category: .livingLights, brightness: 0.70, colors: ["#FFB3C1", "#FFD6A5", "#FFF1CF", "#A2D2FF"], style: .living),
-        Spec(name: "Club Wave", description: "High-energy cyan, violet, lime, and hot pink waves for party rooms and gaming setups.", category: .livingLights, brightness: 0.82, colors: ["#00E5FF", "#9B5DE5", "#7CFF00", "#F72585"], style: .living)
+        Spec(name: "Club Wave", description: "High-energy cyan, violet, lime, and hot pink waves for party rooms and gaming setups.", category: .livingLights, brightness: 0.82, colors: ["#00E5FF", "#9B5DE5", "#7CFF00", "#F72585"], style: .living),
+        Spec(name: "Ember Carousel", description: "Rotating ember, brass, and dark cherry tones for a slow firelight orbit.", category: .livingLights, brightness: 0.50, colors: ["#FF6A00", "#B23A48", "#FFB000", "#4A0D0D"], style: .living),
+        Spec(name: "Galaxy Roll", description: "Deep violet, star blue, nebula pink, and icy white drifting lamp by lamp.", category: .livingLights, brightness: 0.60, colors: ["#240046", "#4361EE", "#F72585", "#E0FBFC"], style: .living),
+        Spec(name: "Rain Ripple", description: "Soft teal, gray-blue, pale aqua, and dim navy cycling like rain on glass.", category: .livingLights, brightness: 0.52, colors: ["#2A9D8F", "#6C91A6", "#CAF0F8", "#1D3557"], style: .living),
+        Spec(name: "Carnival Loop", description: "Bright red, cyan, yellow, violet, and green rotating for playful party motion.", category: .livingLights, brightness: 0.78, colors: ["#FF3B30", "#00E5FF", "#FFD60A", "#AF52DE", "#34C759"], style: .living),
+        Spec(name: "Aurora Ribbon", description: "Green, purple, blue, and pearl ribbons sweeping slowly across compatible lights.", category: .livingLights, brightness: 0.64, colors: ["#00E087", "#9B5DE5", "#4CC9F0", "#F8F9FA"], style: .living)
     ]
 }
