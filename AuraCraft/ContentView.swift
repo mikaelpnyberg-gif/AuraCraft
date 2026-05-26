@@ -468,6 +468,27 @@ struct Mood: Identifiable {
     }
 }
 
+private extension Mood {
+    func withLightSettings(_ settings: [LightSetting]) -> Mood {
+        let appliedSettings = settings.isEmpty ? [lightSetting] : settings
+        return Mood(
+            id: id,
+            name: name,
+            description: description,
+            category: category,
+            isGenerated: isGenerated,
+            isLocked: isLocked,
+            isPremium: isPremium,
+            style: style,
+            requiredCapability: requiredCapability,
+            lightSetting: appliedSettings[0],
+            lightSettings: appliedSettings,
+            gradientColors: appliedSettings.map(\.previewColor),
+            animationInterval: animationInterval
+        )
+    }
+}
+
 // ============================================================
 // MARK: - § 4  HOMEKIT MANAGER
 // ============================================================
@@ -758,17 +779,29 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
         stopLivingAnimation(for: room.id)
         applyMoodFrame(mood, to: room)
 
-        let interval = UInt64(mood.animationInterval * 1_000_000_000)
         livingAnimationTasks[room.id] = Task { [weak self] in
+            var currentMood = mood
             var offset = 1
+
             while !Task.isCancelled {
-                try? await Task.sleep(nanoseconds: interval)
-                await MainActor.run {
-                    guard let self else { return }
-                    let shifted = self.shiftedMood(mood, offset: offset)
-                    self.applyMoodFrame(shifted, to: room)
-                    offset += 1
+                let nextMood = self?.shiftedMood(mood, offset: offset) ?? mood
+                let stepCount = max(3, min(5, Int(mood.animationInterval.rounded())))
+                let stepDelay = UInt64((mood.animationInterval / Double(stepCount)) * 1_000_000_000)
+
+                for step in 1...stepCount {
+                    try? await Task.sleep(nanoseconds: stepDelay)
+                    guard !Task.isCancelled else { return }
+
+                    let progress = Double(step) / Double(stepCount)
+                    await MainActor.run {
+                        guard let self else { return }
+                        let frame = self.interpolatedMood(from: currentMood, to: nextMood, progress: progress)
+                        self.applyMoodFrame(frame, to: room)
+                    }
                 }
+
+                currentMood = nextMood
+                offset += 1
             }
         }
     }
@@ -797,20 +830,57 @@ final class HomeKitManager: NSObject, ObservableObject, HMHomeManagerDelegate {
 
     private func shiftedMood(_ mood: Mood, offset: Int) -> Mood {
         let settings = mood.lightSettings.indices.map { mood.lightSettings[($0 + offset) % mood.lightSettings.count] }
-        return Mood(
-            name: mood.name,
-            description: mood.description,
-            category: mood.category,
-            isGenerated: mood.isGenerated,
-            isLocked: mood.isLocked,
-            isPremium: mood.isPremium,
-            style: mood.style,
-            requiredCapability: mood.requiredCapability,
-            lightSetting: settings.first ?? mood.lightSetting,
-            lightSettings: settings,
-            gradientColors: settings.map(\.previewColor),
-            animationInterval: mood.animationInterval
-        )
+        return mood.withLightSettings(settings)
+    }
+
+    private func interpolatedMood(from startMood: Mood, to endMood: Mood, progress: Double) -> Mood {
+        let startSettings = startMood.lightSettings.isEmpty ? [startMood.lightSetting] : startMood.lightSettings
+        let endSettings = endMood.lightSettings.isEmpty ? [endMood.lightSetting] : endMood.lightSettings
+        let count = max(startSettings.count, endSettings.count)
+
+        let settings = (0..<count).map { index in
+            let start = startSettings[index % startSettings.count]
+            let end = endSettings[index % endSettings.count]
+            return interpolatedSetting(from: start, to: end, progress: progress)
+        }
+
+        return endMood.withLightSettings(settings)
+    }
+
+    private func interpolatedSetting(from start: LightSetting, to end: LightSetting, progress: Double) -> LightSetting {
+        let clampedProgress = min(max(progress, 0), 1)
+        let brightness = interpolate(start.brightness, end.brightness, progress: clampedProgress)
+
+        if let startHue = start.hue, let endHue = end.hue,
+           let startSaturation = start.saturation, let endSaturation = end.saturation {
+            let hueDelta = shortestHueDelta(from: startHue, to: endHue)
+            let hue = normalizedHue(startHue + hueDelta * clampedProgress)
+            let saturation = interpolate(startSaturation, endSaturation, progress: clampedProgress)
+            return LightSetting(brightness: brightness, hue: hue, saturation: saturation)
+        }
+
+        if let startTemperature = start.colorTemperatureKelvin, let endTemperature = end.colorTemperatureKelvin {
+            let temperature = Int(interpolate(Double(startTemperature), Double(endTemperature), progress: clampedProgress).rounded())
+            return LightSetting(brightness: brightness, colorTemperatureKelvin: temperature)
+        }
+
+        return clampedProgress < 1 ? start : end
+    }
+
+    private func interpolate(_ start: Double, _ end: Double, progress: Double) -> Double {
+        start + (end - start) * progress
+    }
+
+    private func shortestHueDelta(from start: Double, to end: Double) -> Double {
+        let rawDelta = normalizedHue(end) - normalizedHue(start)
+        if rawDelta > 180 { return rawDelta - 360 }
+        if rawDelta < -180 { return rawDelta + 360 }
+        return rawDelta
+    }
+
+    private func normalizedHue(_ hue: Double) -> Double {
+        let wrapped = hue.truncatingRemainder(dividingBy: 360)
+        return wrapped < 0 ? wrapped + 360 : wrapped
     }
 
     func currentMood(for room: Room) -> Mood? { appliedMoods[room.id] }
@@ -2117,12 +2187,14 @@ struct MoodDetailSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var applied = false
     @State private var brightnessLevel: Double
+    @State private var animationInterval: Double
 
     init(mood: Mood, room: Room, onApply: @escaping (Mood) -> Void) {
         self.mood = mood
         self.room = room
         self.onApply = onApply
         _brightnessLevel = State(initialValue: mood.lightSetting.brightness)
+        _animationInterval = State(initialValue: mood.animationInterval)
     }
 
     private var compatibleLightCount: Int {
@@ -2157,8 +2229,14 @@ struct MoodDetailSheet: View {
             lightSetting: settings[0],
             lightSettings: settings,
             gradientColors: settings.map(\.previewColor),
-            animationInterval: mood.animationInterval
+            animationInterval: animationInterval
         )
+    }
+
+    private var speedLabel: String {
+        if animationInterval <= 3 { return "Fast" }
+        if animationInterval >= 7 { return "Slow" }
+        return "Medium"
     }
 
     var body: some View {
@@ -2234,7 +2312,7 @@ struct MoodDetailSheet: View {
                                     SettingChip(icon: "paintpalette", label: "Hue", value: "\(Int(h))°")
                                 }
                                 if mood.style == .living {
-                                    SettingChip(icon: "timer", label: "Movement", value: "\(Int(mood.animationInterval))s")
+                                    SettingChip(icon: "timer", label: "Movement", value: "\(Int(animationInterval))s")
                                 }
                             }
                         }
@@ -2257,10 +2335,35 @@ struct MoodDetailSheet: View {
                         .auraCard(padding: AuraSpacing.md)
 
                         if mood.style == .living {
+                            VStack(alignment: .leading, spacing: AuraSpacing.sm) {
+                                HStack {
+                                    Text("Animation Speed")
+                                        .font(AuraFont.caption(11))
+                                        .foregroundColor(AuraColor.textTertiary)
+                                        .kerning(1.5)
+                                    Spacer()
+                                    Text("\(speedLabel) · \(Int(animationInterval))s")
+                                        .font(AuraFont.title(14))
+                                        .foregroundColor(AuraColor.textPrimary)
+                                }
+
+                                Slider(value: $animationInterval, in: 3...8, step: 1)
+                                    .tint(AuraColor.accent)
+
+                                HStack {
+                                    Text("Faster")
+                                    Spacer()
+                                    Text("Slower")
+                                }
+                                .font(AuraFont.body(11))
+                                .foregroundColor(AuraColor.textTertiary)
+                            }
+                            .auraCard(padding: AuraSpacing.md)
+
                             HStack(spacing: AuraSpacing.sm) {
                                 Image(systemName: "waveform.path.ecg")
                                     .foregroundColor(AuraColor.accent)
-                                Text("Applying this moving mood starts a gentle HomeKit animation that updates every \(Int(mood.animationInterval)) seconds.")
+                                Text("Applying this moving mood fades between colours with throttled HomeKit updates about every second.")
                                     .font(AuraFont.body(13))
                                     .foregroundColor(AuraColor.textSecondary)
                                     .fixedSize(horizontal: false, vertical: true)
