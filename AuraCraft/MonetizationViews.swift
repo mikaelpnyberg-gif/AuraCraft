@@ -97,7 +97,7 @@ struct PaywallView: View {
 
 private enum AppLegalLinks {
     static let standardEULAURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
-    static let privacyPolicyURL = URL(string: "https://www.apple.com/legal/privacy/")!
+    static let privacyPolicyURL = URL(string: "https://mikaelpnyberg-gif.github.io/myvalo-privacy/")!
 }
 
 private struct SubscriptionDisclosureView: View {
