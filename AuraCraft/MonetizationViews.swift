@@ -2,6 +2,7 @@ import SwiftUI
 
 struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
     @EnvironmentObject private var storeManager: StoreManager
 
     var body: some View {
@@ -39,6 +40,12 @@ struct PaywallView: View {
                         PaywallBenefitRow(icon: "house.fill", title: Strings.benefitHomeKitSync)
                     }
                     .auraCard(padding: AuraSpacing.md)
+
+                    SubscriptionDisclosureView(
+                        priceText: storeManager.proPriceText,
+                        onOpenPrivacy: { openURL(AppLegalLinks.privacyPolicyURL) },
+                        onOpenTerms: { openURL(AppLegalLinks.standardEULAURL) }
+                    )
 
                     VStack(spacing: AuraSpacing.md) {
                         Button {
@@ -84,6 +91,65 @@ struct PaywallView: View {
         }
         .onChange(of: storeManager.isProUnlocked) { _, isUnlocked in
             if isUnlocked { dismiss() }
+        }
+    }
+}
+
+private enum AppLegalLinks {
+    static let standardEULAURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
+    static let privacyPolicyURL = URL(string: "https://www.apple.com/legal/privacy/")!
+}
+
+private struct SubscriptionDisclosureView: View {
+    let priceText: String
+    let onOpenPrivacy: () -> Void
+    let onOpenTerms: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: AuraSpacing.md) {
+            VStack(alignment: .leading, spacing: AuraSpacing.xs) {
+                Text("Subscription Details")
+                    .font(AuraFont.caption(11))
+                    .foregroundColor(AuraColor.textTertiary)
+                    .kerning(1.5)
+                    .textCase(.uppercase)
+
+                DisclosureRow(title: "Subscription", value: "MyValo Pro")
+                DisclosureRow(title: "Length", value: "1 month, auto-renewing")
+                DisclosureRow(title: "Price", value: "\(priceText) per month")
+            }
+
+            Text("Payment is charged to your Apple ID. The subscription renews automatically unless cancelled at least 24 hours before the end of the current period. Manage or cancel anytime in your App Store account settings.")
+                .font(AuraFont.body(12))
+                .foregroundColor(AuraColor.textSecondary)
+                .lineSpacing(3)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: AuraSpacing.md) {
+                Button("Privacy Policy", action: onOpenPrivacy)
+                Button("Terms of Use (EULA)", action: onOpenTerms)
+            }
+            .font(AuraFont.caption(13))
+            .foregroundColor(AuraColor.accent)
+        }
+        .auraCard(padding: AuraSpacing.md)
+    }
+}
+
+private struct DisclosureRow: View {
+    let title: String
+    let value: String
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline) {
+            Text(title)
+                .font(AuraFont.body(13))
+                .foregroundColor(AuraColor.textSecondary)
+            Spacer(minLength: AuraSpacing.md)
+            Text(value)
+                .font(AuraFont.caption(13))
+                .foregroundColor(AuraColor.textPrimary)
+                .multilineTextAlignment(.trailing)
         }
     }
 }
